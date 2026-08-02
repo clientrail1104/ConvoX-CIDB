@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Voice & Chat Studio + Knowledge Base Engine</title>
+  <title>Empathetic AI Voice & Chat Studio + Knowledge Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -40,7 +40,6 @@
       flex-direction: column;
     }
 
-    /* Header */
     header {
       padding: 18px 32px;
       border-bottom: 1px solid var(--border);
@@ -71,7 +70,6 @@
       color: #a1a1aa;
     }
 
-    /* Main Grid */
     .studio-grid {
       display: grid;
       grid-template-columns: 460px 1fr;
@@ -83,7 +81,6 @@
       flex: 1;
     }
 
-    /* Left Control Panel */
     .panel {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -99,7 +96,6 @@
     .panel-header h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 4px; }
     .panel-header p { color: var(--text-muted); font-size: 0.88rem; }
 
-    /* Mode Action Buttons */
     .action-bar {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -133,7 +129,6 @@
 
     .action-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-    /* Knowledge Base Section */
     .kb-section {
       border-top: 1px solid var(--border);
       padding-top: 20px;
@@ -169,10 +164,7 @@
     .drop-zone p { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
     .drop-zone input { display: none; }
 
-    .kb-actions {
-      display: flex;
-      gap: 8px;
-    }
+    .kb-actions { display: flex; gap: 8px; }
 
     .kb-btn {
       flex: 1;
@@ -213,7 +205,6 @@
     .file-remove { color: var(--text-muted); cursor: pointer; border: none; background: none; font-size: 0.9rem; }
     .file-remove:hover { color: #ef4444; }
 
-    /* Code Box */
     .code-box-container {
       border-top: 1px solid var(--border);
       padding-top: 20px;
@@ -254,7 +245,6 @@
       max-height: 120px;
     }
 
-    /* Right Preview Stage */
     .preview-stage {
       background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
       border: 1px dashed rgba(255, 255, 255, 0.15);
@@ -277,7 +267,6 @@
       color: var(--text-muted);
     }
 
-    /* Voice Stage UI */
     .voice-widget {
       display: flex;
       flex-direction: column;
@@ -356,7 +345,6 @@
       text-align: left;
     }
 
-    /* Chat Stage UI */
     .chat-widget {
       width: 100%;
       max-width: 440px;
@@ -400,7 +388,7 @@
 
     .msg.bot { background: rgba(255, 255, 255, 0.08); align-self: flex-start; border-bottom-left-radius: 2px; }
     .msg.user { background: #ffffff; color: #000000; align-self: flex-end; border-bottom-right-radius: 2px; }
-    .msg-source { font-size: 0.7rem; opacity: 0.7; margin-top: 4px; font-style: italic; }
+    .msg-source { font-size: 0.72rem; opacity: 0.75; margin-top: 6px; font-weight: 500; color: #a855f7; }
 
     .chat-foot { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
     .chat-foot input {
@@ -433,19 +421,17 @@
   <header>
     <div class="brand">
       <span>AI Assistant Studio</span>
-      <span class="brand-badge">Full Engine</span>
+      <span class="brand-badge">Empathetic CX Engine</span>
     </div>
   </header>
 
   <main class="studio-grid">
-    <!-- Left Control Panel -->
     <section class="panel">
       <div class="panel-header">
         <h2>Assistant Controls</h2>
-        <p>Manage multi-document knowledge bases and auto-connecting AI agents.</p>
+        <p>Manage multi-document knowledge bases with empathetic response tuning.</p>
       </div>
 
-      <!-- Mode Action Buttons -->
       <div class="action-bar">
         <button class="action-btn active" id="btnVoice" onclick="setMode('voice')">
           <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
@@ -457,7 +443,6 @@
         </button>
       </div>
 
-      <!-- Multi-Document Knowledge Base Upload Area -->
       <div class="kb-section">
         <div class="kb-header">
           <span class="kb-title">Knowledge Base Engine</span>
@@ -468,7 +453,6 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto; color: #a855f7;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <p>Drag & Drop <strong>Multiple Files</strong> or Click to Upload</p>
           <p style="font-size: 0.72rem; color: #71717a; margin-top: 4px;">Supports bulk TXT, DOCX, PDF, PNG, JPG</p>
-          <!-- Multiple file selection attribute enabled -->
           <input type="file" id="fileInput" multiple accept=".txt,.doc,.docx,.pdf,.png,.jpg,.jpeg" onchange="handleFileSelect(event)">
         </div>
 
@@ -480,7 +464,6 @@
         <div class="file-list" id="fileList"></div>
       </div>
 
-      <!-- Dynamic Code Snippet Box -->
       <div class="code-box-container">
         <div class="code-header">
           <label>Embeddable Code</label>
@@ -490,11 +473,9 @@
       </div>
     </section>
 
-    <!-- Right Live Interactive Preview -->
     <section class="preview-stage">
       <div class="preview-label">Live Test Environment</div>
 
-      <!-- Voicebot Stage -->
       <div class="voice-widget" id="voiceStage">
         <div class="voice-status-indicator">
           <div class="mic-dot"></div>
@@ -516,19 +497,18 @@
         </div>
       </div>
 
-      <!-- Chatbot Stage -->
       <div class="chat-widget hidden" id="chatStage">
         <div class="chat-head">
           <div style="display:flex; align-items:center; gap:8px;">
             <div class="status-dot"></div>
-            <span style="font-weight: 600; font-size: 0.88rem;">Multi-Document Knowledge Agent</span>
+            <span style="font-weight: 600; font-size: 0.88rem;">Empathetic Assistant</span>
           </div>
         </div>
         <div class="chat-body" id="chatMessages">
-          <div class="msg bot">Hello! I am ready to answer queries using your uploaded multi-document Knowledge Base.</div>
+          <div class="msg bot">Hello! I'm here for you. How can I assist you with your documents today?</div>
         </div>
         <div class="chat-foot">
-          <input type="text" id="chatInput" placeholder="Ask a question from uploaded documents..." onkeydown="handleChatKey(event)">
+          <input type="text" id="chatInput" placeholder="Ask anything about your uploaded files..." onkeydown="handleChatKey(event)">
           <button class="send-btn" onclick="sendChatMessage()">Send</button>
         </div>
       </div>
@@ -536,21 +516,16 @@
   </main>
 
   <script>
-    // Configure PDF.js Worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    // Global Knowledge Store
     let knowledgeBase = [];
     let activeMode = 'voice';
-
-    // Web Speech API Variables
     let recognition = null;
     let isListening = false;
     let autoReconnect = true;
 
-    // --- Multi-Document Knowledge Base Upload Engine ---
+    // File Upload & Reading Engine
     const dropZone = document.getElementById('dropZone');
-    
     ['dragenter', 'dragover'].forEach(e => dropZone.addEventListener(e, (evt) => {
       evt.preventDefault();
       dropZone.classList.add('dragover');
@@ -571,7 +546,7 @@
     }
 
     async function processFiles(files) {
-      document.getElementById('kbStatus').textContent = `Processing ${files.length} File(s)...`;
+      document.getElementById('kbStatus').textContent = `Reading ${files.length} File(s)...`;
 
       for (const file of files) {
         const ext = file.name.split('.').pop().toLowerCase();
@@ -608,7 +583,7 @@
             });
           }
         } catch (err) {
-          console.error("Error reading file: " + file.name, err);
+          console.error("Error reading " + file.name, err);
         }
       }
 
@@ -632,7 +607,7 @@
         container.appendChild(div);
       });
 
-      document.getElementById('kbStatus').textContent = `${knowledgeBase.length} Document(s) Loaded`;
+      document.getElementById('kbStatus').textContent = `${knowledgeBase.length} Document(s) Active`;
     }
 
     function removeFile(id) {
@@ -645,42 +620,72 @@
       renderFileList();
     }
 
-    // --- Search / Query Engine Across Multiple Documents ---
+    // Empathetic + Detail-Extraction Query Engine
     function queryKnowledgeBase(userQuery) {
       if (knowledgeBase.length === 0) {
-        return { text: "No documents loaded in the Knowledge Base. Please upload your files on the left panel.", source: null };
+        return { 
+          text: "I want to make sure I give you the exact details! Please upload your documents into the Knowledge Base on the left so I can search them for you.", 
+          source: null 
+        };
       }
 
-      const words = userQuery.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-      let bestMatch = null;
-      let highestScore = 0;
+      const queryLower = userQuery.toLowerCase();
+      const keywords = queryLower.split(/\s+/).filter(w => w.length > 2);
+      
+      let bestMatches = [];
+      let docSources = new Set();
 
       for (const doc of knowledgeBase) {
-        const sentences = doc.text.split(/(?<=[.?!])\s+/);
-        for (const sentence of sentences) {
-          let score = 0;
-          const lowerSentence = sentence.toLowerCase();
-          words.forEach(word => {
-            if (lowerSentence.includes(word)) score++;
+        const paragraphs = doc.text.split(/(?:\r?\n){1,}/);
+        
+        for (const para of paragraphs) {
+          if (!para.trim()) continue;
+          
+          let matches = 0;
+          const lowerPara = para.toLowerCase();
+          keywords.forEach(word => {
+            if (lowerPara.includes(word)) matches++;
           });
-          if (score > highestScore) {
-            highestScore = score;
-            bestMatch = { sentence, docName: doc.name };
+
+          if (matches > 0) {
+            bestMatches.push({ text: para.trim(), score: matches, source: doc.name });
+            docSources.add(doc.name);
           }
         }
       }
 
-      if (bestMatch && highestScore > 0) {
-        return { text: bestMatch.sentence, source: bestMatch.docName };
+      // Empathetic Openers
+      const empatheticOpeners = [
+        "I completely understand! Here is what I found for you: ",
+        "I'm glad to help with that. Here are the exact details: ",
+        "I hear you. According to your files: ",
+        "I've got you covered! Here is the precise information: "
+      ];
+
+      const opener = empatheticOpeners[Math.floor(Math.random() * empatheticOpeners.length)];
+
+      if (bestMatches.length > 0) {
+        bestMatches.sort((a, b) => b.score - a.score);
+        
+        // Shorten & summarize extracted detail cleanly
+        let detail = bestMatches[0].text;
+        if (detail.length > 220) {
+          detail = detail.substring(0, 220).trim() + "...";
+        }
+
+        return {
+          text: `${opener}"${detail}"`,
+          source: Array.from(docSources).join(', ')
+        };
       }
 
       return {
-        text: "I searched all uploaded documents, but couldn't find a direct answer to your question.",
+        text: "I understand what you're asking, but I couldn't find those specific details in your uploaded documents. Could you double-check the file or rephrase?",
         source: null
       };
     }
 
-    // --- UI Mode Switcher ---
+    // UI Switching
     function setMode(mode) {
       activeMode = mode;
       document.getElementById('btnVoice').classList.toggle('active', mode === 'voice');
@@ -714,7 +719,7 @@
       setTimeout(() => copyBtn.textContent = 'Copy Code', 2000);
     }
 
-    // --- Chatbot Logic ---
+    // Chat Logic
     function sendChatMessage() {
       const input = document.getElementById('chatInput');
       const container = document.getElementById('chatMessages');
@@ -733,17 +738,17 @@
         const res = queryKnowledgeBase(text);
         const botMsg = document.createElement('div');
         botMsg.className = 'msg bot';
-        botMsg.innerHTML = `${res.text} ${res.source ? `<div class="msg-source">Source File: ${res.source}</div>` : ''}`;
+        botMsg.innerHTML = `${res.text} ${res.source ? `<div class="msg-source">📁 Source: ${res.source}</div>` : ''}`;
         container.appendChild(botMsg);
         container.scrollTop = container.scrollHeight;
-      }, 400);
+      }, 350);
     }
 
     function handleChatKey(e) {
       if (e.key === 'Enter') sendChatMessage();
     }
 
-    // --- Auto-Connecting Speech Recognition Engine ---
+    // Auto-Connecting Speech Recognition Engine
     function initSpeech() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
@@ -758,7 +763,7 @@
       recognition.onstart = () => {
         isListening = true;
         document.getElementById('waveSphere').classList.add('active-listening');
-        document.getElementById('voiceConnectionLabel').textContent = "Microphone Active & Listening";
+        document.getElementById('voiceConnectionLabel').textContent = "Microphone Connected & Active";
       };
 
       recognition.onresult = (evt) => {
@@ -766,20 +771,17 @@
         for (let i = evt.resultIndex; i < evt.results.length; i++) {
           transcript += evt.results[i][0].transcript;
         }
-        document.getElementById('voiceTranscript').innerHTML = `<strong>You said:</strong> "${transcript}"`;
+        document.getElementById('voiceTranscript').innerHTML = `<strong>You:</strong> "${transcript}"`;
         
         if (evt.results[0].isFinal) {
           stopVoiceListening();
           const res = queryKnowledgeBase(transcript);
-          document.getElementById('voiceTranscript').innerHTML += `<br><br><strong>Bot:</strong> ${res.text}`;
+          document.getElementById('voiceTranscript').innerHTML += `<br><br><strong>Assistant:</strong> ${res.text}`;
           speakResponse(res.text);
         }
       };
 
-      recognition.onerror = (err) => {
-        console.warn("Speech recognition error:", err);
-        stopVoiceListening();
-      };
+      recognition.onerror = () => stopVoiceListening();
 
       recognition.onend = () => {
         isListening = false;
@@ -797,7 +799,7 @@
       try {
         recognition.start();
       } catch (e) {
-        // Handle cases where recognition is already starting
+        // Ignored if already started
       }
     }
 
@@ -834,7 +836,6 @@
       }
     }
 
-    // Auto-connect on page load
     window.onload = () => {
       setMode('voice');
       autoConnectMicrophone();
