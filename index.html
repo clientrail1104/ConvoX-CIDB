@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Voice & Chat Studio + Knowledge Base</title>
+  <title>AI Voice & Chat Studio + Knowledge Base Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- PDF Parsing Library (pdfjs) -->
+  
+  <!-- Client-side Document Parsers -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <!-- DOCX Parsing Library (mammoth.js) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-  <!-- OCR Library for PNG/JPG Image Parsing (tesseract.js) -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 
   <style>
@@ -100,7 +99,7 @@
     .panel-header h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 4px; }
     .panel-header p { color: var(--text-muted); font-size: 0.88rem; }
 
-    /* Action Buttons (Voice vs Chat) */
+    /* Mode Action Buttons */
     .action-bar {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -123,9 +122,7 @@
       transition: all 0.2s ease;
     }
 
-    .action-btn:hover {
-      background: rgba(255, 255, 255, 0.07);
-    }
+    .action-btn:hover { background: rgba(255, 255, 255, 0.07); }
 
     .action-btn.active {
       background: #ffffff;
@@ -172,11 +169,30 @@
     .drop-zone p { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
     .drop-zone input { display: none; }
 
+    .kb-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .kb-btn {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .kb-btn:hover { color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+
     .file-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 180px;
+      max-height: 200px;
       overflow-y: auto;
     }
 
@@ -192,7 +208,7 @@
     }
 
     .file-info { display: flex; align-items: center; gap: 8px; overflow: hidden; }
-    .file-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+    .file-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
     .file-type { font-size: 0.7rem; color: #a855f7; font-weight: 600; text-transform: uppercase; }
     .file-remove { color: var(--text-muted); cursor: pointer; border: none; background: none; font-size: 0.9rem; }
     .file-remove:hover { color: #ef4444; }
@@ -269,7 +285,7 @@
       gap: 28px;
       text-align: center;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
     }
 
     .wave-sphere {
@@ -285,7 +301,6 @@
       cursor: pointer;
       transition: transform 0.2s ease;
     }
-    .wave-sphere:hover { transform: scale(1.03); }
 
     .listening-pulse {
       position: absolute;
@@ -320,31 +335,24 @@
 
     @keyframes bounce { 0% { height: 10px; } 100% { height: 44px; } }
 
-    .voice-controls { display: flex; gap: 12px; }
-    .voice-btn {
-      padding: 10px 20px;
-      border-radius: 100px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      font-weight: 600;
-      font-size: 0.88rem;
-      cursor: pointer;
+    .voice-status-indicator {
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 0.82rem;
+      color: #10b981;
     }
-    .voice-btn:hover { background: rgba(255, 255, 255, 0.15); }
+    .mic-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
 
     .voice-transcript-box {
       width: 100%;
       background: rgba(0, 0, 0, 0.4);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px;
+      padding: 16px;
       font-size: 0.88rem;
       color: var(--text-muted);
-      min-height: 80px;
+      min-height: 90px;
       text-align: left;
     }
 
@@ -434,10 +442,10 @@
     <section class="panel">
       <div class="panel-header">
         <h2>Assistant Controls</h2>
-        <p>Toggle modes, feed document knowledge, and export embed code.</p>
+        <p>Manage multi-document knowledge bases and auto-connecting AI agents.</p>
       </div>
 
-      <!-- 2 Main Buttons -->
+      <!-- Mode Action Buttons -->
       <div class="action-bar">
         <button class="action-btn active" id="btnVoice" onclick="setMode('voice')">
           <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
@@ -449,7 +457,7 @@
         </button>
       </div>
 
-      <!-- Knowledge Base Upload Area -->
+      <!-- Multi-Document Knowledge Base Upload Area -->
       <div class="kb-section">
         <div class="kb-header">
           <span class="kb-title">Knowledge Base Engine</span>
@@ -458,9 +466,15 @@
 
         <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto; color: #a855f7;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <p>Drag & Drop or <strong>Browse Files</strong></p>
-          <p style="font-size: 0.72rem; color: #71717a; margin-top: 4px;">Supports TXT, DOCX, PDF, PNG, JPG</p>
+          <p>Drag & Drop <strong>Multiple Files</strong> or Click to Upload</p>
+          <p style="font-size: 0.72rem; color: #71717a; margin-top: 4px;">Supports bulk TXT, DOCX, PDF, PNG, JPG</p>
+          <!-- Multiple file selection attribute enabled -->
           <input type="file" id="fileInput" multiple accept=".txt,.doc,.docx,.pdf,.png,.jpg,.jpeg" onchange="handleFileSelect(event)">
+        </div>
+
+        <div class="kb-actions">
+          <button class="kb-btn" onclick="document.getElementById('fileInput').click()">+ Add More Files</button>
+          <button class="kb-btn" onclick="clearAllKnowledge()">Clear All Documents</button>
         </div>
 
         <div class="file-list" id="fileList"></div>
@@ -482,6 +496,11 @@
 
       <!-- Voicebot Stage -->
       <div class="voice-widget" id="voiceStage">
+        <div class="voice-status-indicator">
+          <div class="mic-dot"></div>
+          <span id="voiceConnectionLabel">Auto-Connecting Microphone...</span>
+        </div>
+
         <div class="wave-sphere" id="waveSphere" onclick="toggleVoiceListening()">
           <div class="listening-pulse"></div>
           <div class="audio-bars">
@@ -492,15 +511,8 @@
           </div>
         </div>
 
-        <div class="voice-controls">
-          <button class="voice-btn" onclick="toggleVoiceListening()" id="micToggleBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
-            <span id="micBtnText">Start Listening</span>
-          </button>
-        </div>
-
         <div class="voice-transcript-box" id="voiceTranscript">
-          <em>Click the microphone button or the pulsating sphere above to speak...</em>
+          <em>Microphone connected. Listening for your voice...</em>
         </div>
       </div>
 
@@ -509,11 +521,11 @@
         <div class="chat-head">
           <div style="display:flex; align-items:center; gap:8px;">
             <div class="status-dot"></div>
-            <span style="font-weight: 600; font-size: 0.88rem;">Knowledge-Base AI Agent</span>
+            <span style="font-weight: 600; font-size: 0.88rem;">Multi-Document Knowledge Agent</span>
           </div>
         </div>
         <div class="chat-body" id="chatMessages">
-          <div class="msg bot">Hello! I am ready to answer queries using your uploaded Knowledge Base.</div>
+          <div class="msg bot">Hello! I am ready to answer queries using your uploaded multi-document Knowledge Base.</div>
         </div>
         <div class="chat-foot">
           <input type="text" id="chatInput" placeholder="Ask a question from uploaded documents..." onkeydown="handleChatKey(event)">
@@ -524,18 +536,19 @@
   </main>
 
   <script>
-    // PDF.js worker setup
+    // Configure PDF.js Worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
     // Global Knowledge Store
     let knowledgeBase = [];
     let activeMode = 'voice';
 
-    // Web Speech API instances
+    // Web Speech API Variables
     let recognition = null;
     let isListening = false;
+    let autoReconnect = true;
 
-    // --- Knowledge Base Upload Engine ---
+    // --- Multi-Document Knowledge Base Upload Engine ---
     const dropZone = document.getElementById('dropZone');
     
     ['dragenter', 'dragover'].forEach(e => dropZone.addEventListener(e, (evt) => {
@@ -550,14 +563,16 @@
 
     dropZone.addEventListener('drop', (evt) => {
       const files = evt.dataTransfer.files;
-      processFiles(files);
+      if (files.length) processFiles(files);
     });
 
     function handleFileSelect(evt) {
-      processFiles(evt.target.files);
+      if (evt.target.files.length) processFiles(evt.target.files);
     }
 
     async function processFiles(files) {
+      document.getElementById('kbStatus').textContent = `Processing ${files.length} File(s)...`;
+
       for (const file of files) {
         const ext = file.name.split('.').pop().toLowerCase();
         let extractedText = "";
@@ -591,13 +606,13 @@
               type: ext,
               text: extractedText
             });
-            renderFileList();
           }
         } catch (err) {
           console.error("Error reading file: " + file.name, err);
-          alert("Could not process " + file.name);
         }
       }
+
+      renderFileList();
     }
 
     function renderFileList() {
@@ -625,10 +640,15 @@
       renderFileList();
     }
 
-    // --- Knowledge Search / Query Engine ---
+    function clearAllKnowledge() {
+      knowledgeBase = [];
+      renderFileList();
+    }
+
+    // --- Search / Query Engine Across Multiple Documents ---
     function queryKnowledgeBase(userQuery) {
       if (knowledgeBase.length === 0) {
-        return { text: "No documents loaded in the Knowledge Base. Please upload text, DOCX, PDF, or image files.", source: null };
+        return { text: "No documents loaded in the Knowledge Base. Please upload your files on the left panel.", source: null };
       }
 
       const words = userQuery.toLowerCase().split(/\s+/).filter(w => w.length > 2);
@@ -655,7 +675,7 @@
       }
 
       return {
-        text: "I processed your request, but could not find a matching excerpt in your uploaded Knowledge Base.",
+        text: "I searched all uploaded documents, but couldn't find a direct answer to your question.",
         source: null
       };
     }
@@ -670,7 +690,14 @@
       document.getElementById('chatStage').classList.toggle('hidden', mode !== 'chat');
 
       updateEmbedCode();
-      if (mode !== 'voice' && isListening) stopVoiceListening();
+
+      if (mode === 'voice') {
+        autoReconnect = true;
+        autoConnectMicrophone();
+      } else {
+        autoReconnect = false;
+        stopVoiceListening();
+      }
     }
 
     function updateEmbedCode() {
@@ -706,7 +733,7 @@
         const res = queryKnowledgeBase(text);
         const botMsg = document.createElement('div');
         botMsg.className = 'msg bot';
-        botMsg.innerHTML = `${res.text} ${res.source ? `<div class="msg-source">Source: ${res.source}</div>` : ''}`;
+        botMsg.innerHTML = `${res.text} ${res.source ? `<div class="msg-source">Source File: ${res.source}</div>` : ''}`;
         container.appendChild(botMsg);
         container.scrollTop = container.scrollHeight;
       }, 400);
@@ -716,17 +743,23 @@
       if (e.key === 'Enter') sendChatMessage();
     }
 
-    // --- Voicebot Speech Recognition & Synthesis Engine ---
+    // --- Auto-Connecting Speech Recognition Engine ---
     function initSpeech() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        document.getElementById('voiceTranscript').textContent = "Browser Speech API not supported in this environment.";
+        document.getElementById('voiceTranscript').textContent = "Browser Speech API is not supported in this environment.";
         return;
       }
 
       recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        isListening = true;
+        document.getElementById('waveSphere').classList.add('active-listening');
+        document.getElementById('voiceConnectionLabel').textContent = "Microphone Active & Listening";
+      };
 
       recognition.onresult = (evt) => {
         let transcript = "";
@@ -743,36 +776,46 @@
         }
       };
 
-      recognition.onerror = () => stopVoiceListening();
-      recognition.onend = () => stopVoiceListening();
+      recognition.onerror = (err) => {
+        console.warn("Speech recognition error:", err);
+        stopVoiceListening();
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        document.getElementById('waveSphere').classList.remove('active-listening');
+        if (autoReconnect && activeMode === 'voice' && !window.speechSynthesis.speaking) {
+          setTimeout(autoConnectMicrophone, 1000);
+        }
+      };
+    }
+
+    function autoConnectMicrophone() {
+      if (!recognition) initSpeech();
+      if (!recognition || isListening) return;
+
+      try {
+        recognition.start();
+      } catch (e) {
+        // Handle cases where recognition is already starting
+      }
     }
 
     function toggleVoiceListening() {
       if (isListening) {
+        autoReconnect = false;
         stopVoiceListening();
+        document.getElementById('voiceConnectionLabel').textContent = "Microphone Paused (Click to Connect)";
       } else {
-        startVoiceListening();
+        autoReconnect = true;
+        autoConnectMicrophone();
       }
-    }
-
-    function startVoiceListening() {
-      if (!recognition) initSpeech();
-      if (!recognition) return;
-
-      isListening = true;
-      recognition.start();
-
-      document.getElementById('waveSphere').classList.add('active-listening');
-      document.getElementById('micBtnText').textContent = "Stop Listening";
-      document.getElementById('voiceTranscript').innerHTML = "<em>Listening... speak now...</em>";
     }
 
     function stopVoiceListening() {
       isListening = false;
       if (recognition) recognition.stop();
-
       document.getElementById('waveSphere').classList.remove('active-listening');
-      document.getElementById('micBtnText').textContent = "Start Listening";
     }
 
     function speakResponse(text) {
@@ -780,14 +823,21 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 1.0;
+        
+        utterance.onend = () => {
+          if (autoReconnect && activeMode === 'voice') {
+            autoConnectMicrophone();
+          }
+        };
+
         window.speechSynthesis.speak(utterance);
       }
     }
 
-    // Initialize defaults
+    // Auto-connect on page load
     window.onload = () => {
       setMode('voice');
-      initSpeech();
+      autoConnectMicrophone();
     };
   </script>
 </body>
