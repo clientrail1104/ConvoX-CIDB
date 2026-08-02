@@ -3,31 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIP Premium AI CX Suite | Gemini Inspired</title>
+  <title>AI Voice & Chat Studio | ElevenLabs Style</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0e0f12;
-      --panel-bg: rgba(26, 28, 35, 0.82);
-      --panel-border: rgba(255, 255, 255, 0.12);
-      --text-main: #f0f2f5;
-      --text-muted: #9aa0a6;
-      --gemini-gradient: linear-gradient(135deg, #4285f4, #9b51e0, #d946ef, #10b981);
-      --gemini-glow: rgba(155, 81, 224, 0.35);
-      --voice-accent: #3b82f6;
-      --chat-accent: #a855f7;
-      --radius-lg: 24px;
-      --radius-md: 16px;
-      --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --bg-dark: #0a0a0c;
+      --card-bg: rgba(20, 20, 25, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #ededed;
+      --text-muted: #88888e;
+      --accent-gradient: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: var(--font-family);
+      font-family: var(--font);
       -webkit-font-smoothing: antialiased;
     }
 
@@ -37,528 +32,488 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 15% 20%, rgba(66, 133, 244, 0.15) 0%, transparent 45%),
-        radial-gradient(circle at 85% 80%, rgba(217, 70, 239, 0.12) 0%, transparent 45%);
     }
 
-    /* Page Demo Mock Container */
-    .demo-dashboard {
-      text-align: center;
-      max-width: 640px;
-      padding: 2rem;
-    }
-    .vip-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #fbbf24;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
-    }
-    .demo-dashboard h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, #fff 30%, #9aa0a6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .demo-dashboard p {
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }
-
-    /* Floating Action Buttons Container */
-    .ai-fab-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
+    /* Studio Header */
+    header {
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border-color);
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-      z-index: 9999;
-    }
-
-    .fab-btn {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 22px;
-      border-radius: 100px;
-      border: 1px solid var(--panel-border);
-      background: var(--panel-bg);
-      color: var(--text-main);
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      overflow: hidden;
-    }
-
-    /* Gemini Spectrum Glow Ring */
-    .fab-btn::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border-radius: 100px;
-      padding: 2px;
-      background: var(--gemini-gradient);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0.6;
-      transition: opacity 0.3s ease;
-    }
-
-    .fab-btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 14px 35px var(--gemini-glow);
-    }
-    .fab-btn:hover::before {
-      opacity: 1;
-    }
-
-    .fab-icon {
-      width: 22px;
-      height: 22px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .voice-fab {
-      background: linear-gradient(135deg, rgba(66, 133, 244, 0.2), rgba(26, 28, 35, 0.9));
-    }
-    .chat-fab {
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(26, 28, 35, 0.9));
-    }
-
-    /* Shared Drawer Style */
-    .ai-drawer {
-      position: fixed;
-      bottom: 96px;
-      right: 24px;
-      width: 400px;
-      max-width: calc(100vw - 48px);
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius-lg);
-      backdrop-filter: blur(24px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      transform: translateY(20px) scale(0.95);
-      pointer-events: none;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 9998;
-      overflow: hidden;
-    }
-
-    .ai-drawer.active {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: all;
-    }
-
-    .drawer-header {
-      padding: 18px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      background: rgba(255, 255, 255, 0.02);
+      align-items: center;
+      background: rgba(10, 10, 12, 0.8);
+      backdrop-filter: blur(12px);
     }
 
-    .drawer-title {
+    .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 1rem;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
     }
 
-    .sparkle-icon {
-      width: 20px;
-      height: 20px;
-      background: var(--gemini-gradient);
-      -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="black"/></svg>') no-repeat center / contain;
-      mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="black"/></svg>') no-repeat center / contain;
-      display: inline-block;
+    .brand-badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #a1a1aa;
     }
 
-    .close-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s;
+    /* Main Grid Layout */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
     }
-    .close-btn:hover { color: #fff; }
 
-    /* VOICEBOT UI */
-    .voice-content {
-      padding: 32px 24px;
+    /* Control Panel (Left Side) */
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 32px;
+      backdrop-filter: blur(16px);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
       gap: 24px;
     }
 
-    .voice-avatar {
-      position: relative;
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(66, 133, 244, 0.25) 0%, rgba(26, 28, 35, 0.8) 70%);
+    .panel-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .panel-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .panel-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* 2 Main Action Buttons */
+    .action-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .action-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    /* Waveform Pulse Animation */
-    .wave-rings {
-      position: absolute;
-      inset: -10px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      background: var(--gemini-gradient) border-box;
-      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transform: scale(0.8);
-      transition: all 0.4s ease;
-    }
-
-    .listening .wave-rings {
-      opacity: 0.8;
-      animation: pulseWave 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
-    }
-
-    @keyframes pulseWave {
-      0% { transform: scale(0.9); opacity: 0.8; }
-      50% { transform: scale(1.15); opacity: 0.3; }
-      100% { transform: scale(0.9); opacity: 0.8; }
-    }
-
-    .audio-visualizer {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      height: 32px;
-    }
-
-    .bar {
-      width: 4px;
-      height: 8px;
-      background: var(--gemini-gradient);
-      border-radius: 4px;
-      transition: height 0.15s ease;
-    }
-
-    .listening .bar {
-      animation: soundBar 1.2s infinite ease-in-out alternate;
-    }
-    .listening .bar:nth-child(1) { animation-delay: 0.1s; }
-    .listening .bar:nth-child(2) { animation-delay: 0.3s; }
-    .listening .bar:nth-child(3) { animation-delay: 0.2s; }
-    .listening .bar:nth-child(4) { animation-delay: 0.4s; }
-    .listening .bar:nth-child(5) { animation-delay: 0.15s; }
-
-    @keyframes soundBar {
-      0% { height: 6px; }
-      100% { height: 28px; }
-    }
-
-    .voice-status {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-    .voice-transcript {
-      font-size: 1.05rem;
-      font-weight: 500;
-      color: var(--text-main);
-      min-height: 48px;
-    }
-
-    /* CHATBOT UI */
-    .chat-drawer { height: 520px; }
-    .chat-messages {
-      flex: 1;
+      gap: 12px;
       padding: 16px;
-      overflow-y: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.07);
+      transform: translateY(-2px);
+    }
+
+    .action-btn.active {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+    }
+
+    .action-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+    }
+
+    /* Code Snippet Box */
+    .code-box-container {
       display: flex;
       flex-direction: column;
       gap: 12px;
-    }
-
-    .message {
-      max-width: 82%;
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      font-size: 0.92rem;
-      line-height: 1.45;
-    }
-
-    .message.bot {
-      background: rgba(255, 255, 255, 0.06);
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .message.user {
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: #fff;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-
-    .chat-input-area {
-      padding: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    .chat-input {
       flex: 1;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 100px;
-      padding: 10px 16px;
-      color: #fff;
-      outline: none;
-      font-size: 0.9rem;
-    }
-    .chat-input:focus {
-      border-color: #a855f7;
     }
 
-    .send-btn {
-      background: var(--gemini-gradient);
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      color: #fff;
+    .code-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
     }
 
-    /* Transfer Call Banner for Call Centers */
-    .agent-transfer-btn {
-      margin-top: 10px;
-      padding: 8px 14px;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
+    .code-header label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 12px;
       border-radius: 8px;
       font-size: 0.8rem;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .agent-transfer-btn:hover {
-      background: rgba(239, 68, 68, 0.3);
+
+    .copy-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3);
     }
+
+    pre {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #a1a1aa;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    /* Interactive Sandbox Preview (Right Side) */
+    .preview-stage {
+      background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      overflow: hidden;
+    }
+
+    .preview-label {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    /* Voicebot Widget UI */
+    .voice-widget {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      text-align: center;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .wave-sphere {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
+      animation: pulseSphere 3s infinite ease-in-out;
+    }
+
+    @keyframes pulseSphere {
+      0%, 100% { transform: scale(1); filter: blur(0px); }
+      50% { transform: scale(1.05); filter: blur(1px); }
+    }
+
+    .audio-bars {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .bar {
+      width: 4px;
+      height: 24px;
+      background: #ffffff;
+      border-radius: 4px;
+      animation: bounce 1.2s infinite ease-in-out alternate;
+    }
+    .bar:nth-child(2) { animation-delay: 0.2s; }
+    .bar:nth-child(3) { animation-delay: 0.4s; }
+    .bar:nth-child(4) { animation-delay: 0.1s; }
+
+    @keyframes bounce {
+      0% { height: 10px; }
+      100% { height: 40px; }
+    }
+
+    /* Chatbot Widget UI */
+    .chat-widget {
+      width: 100%;
+      max-width: 380px;
+      height: 480px;
+      background: rgba(18, 18, 22, 0.95);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .chat-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .msg.bot {
+      background: rgba(255, 255, 255, 0.08);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    .msg.user {
+      background: #ffffff;
+      color: #000000;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chat-foot {
+      padding: 12px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-foot input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #fff;
+      outline: none;
+    }
+
+    .send-btn {
+      background: #ffffff;
+      color: #000;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Hide element helper */
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- Demo Page Content -->
-  <main class="demo-dashboard">
-    <div class="vip-badge">✦ Premium Customer Concierge</div>
-    <h1>Enterprise AI Call Center Suite</h1>
-    <p>Experience seamless 24/7 priority support powered by Google Gemini inspired multi-modal voice & conversational intelligence.</p>
-  </main>
-
-  <!-- Floating Action Buttons -->
-  <div class="ai-fab-container">
-    <button class="fab-btn voice-fab" id="voiceFab" onclick="toggleVoiceDrawer()">
-      <span class="sparkle-icon"></span>
-      <svg class="fab-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-      <span>Voice Concierge</span>
-    </button>
-
-    <button class="fab-btn chat-fab" id="chatFab" onclick="toggleChatDrawer()">
-      <span class="sparkle-icon"></span>
-      <svg class="fab-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span>AI Smart Chat</span>
-    </button>
-  </div>
-
-  <!-- Voicebot Drawer -->
-  <div class="ai-drawer voice-drawer" id="voiceDrawer">
-    <div class="drawer-header">
-      <div class="drawer-title">
-        <span class="sparkle-icon"></span>
-        <span>Gemini Voice Assistant</span>
-      </div>
-      <button class="close-btn" onclick="toggleVoiceDrawer()">✕</button>
+  <header>
+    <div class="brand">
+      <span>ElevenLabs Studio</span>
+      <span class="brand-badge">Auto-Generator</span>
     </div>
-    <div class="voice-content" id="voiceContent">
-      <div class="voice-avatar" id="voiceAvatar">
-        <div class="wave-rings"></div>
-        <div class="audio-visualizer">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
+  </header>
+
+  <main class="studio-grid">
+    <!-- Left Control Panel -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Select Assistant Type</h2>
+        <p>Generate production-ready embed codes for web apps with one click.</p>
+      </div>
+
+      <!-- Main 2 Action Buttons -->
+      <div class="action-bar">
+        <button class="action-btn active" id="btnVoice" onclick="activateWidget('voice')">
+          <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          Voicebot
+        </button>
+        <button class="action-btn" id="btnChat" onclick="activateWidget('chat')">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Chatbot
+        </button>
+      </div>
+
+      <!-- Generated Code Output -->
+      <div class="code-box-container">
+        <div class="code-header">
+          <label>Generated Embedded Code</label>
+          <button class="copy-btn" onclick="copyEmbedCode()">Copy Code</button>
+        </div>
+        <pre><code id="codeSnippet"></code></pre>
+      </div>
+    </section>
+
+    <!-- Right Live Preview Sandbox -->
+    <section class="preview-stage">
+      <div class="preview-label">Live Test Environment</div>
+
+      <!-- Voicebot Preview Stage -->
+      <div class="voice-widget" id="voiceStage">
+        <div class="wave-sphere">
+          <div class="audio-bars">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Conversational AI Agent</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Listening for audio input...</p>
         </div>
       </div>
-      <div>
-        <div class="voice-status" id="voiceStatus">Listening... Speak now</div>
-        <div class="voice-transcript" id="voiceTranscript">"How may I assist with your account today?"</div>
-      </div>
-      <button class="agent-transfer-btn" onclick="requestHumanAgent()">
-        🎧 Transfer to Priority Live Agent
-      </button>
-    </div>
-  </div>
 
-  <!-- Chatbot Drawer -->
-  <div class="ai-drawer chat-drawer" id="chatDrawer">
-    <div class="drawer-header">
-      <div class="drawer-title">
-        <span class="sparkle-icon"></span>
-        <span>VIP Priority Concierge</span>
+      <!-- Chatbot Preview Stage -->
+      <div class="chat-widget hidden" id="chatStage">
+        <div class="chat-head">
+          <div class="status-dot"></div>
+          <span style="font-weight: 600; font-size: 0.9rem;">ElevenLabs AI Assistant</span>
+        </div>
+        <div class="chat-body" id="chatMessages">
+          <div class="msg bot">Hello! How can I assist you with your project today?</div>
+        </div>
+        <div class="chat-foot">
+          <input type="text" id="chatInput" placeholder="Type a test message..." onkeydown="handleKey(event)">
+          <button class="send-btn" onclick="sendTestMessage()">Send</button>
+        </div>
       </div>
-      <button class="close-btn" onclick="toggleChatDrawer()">✕</button>
-    </div>
-    <div class="chat-messages" id="chatMessages">
-      <div class="message bot">
-        Hello! Welcome to our Premium Customer Support. How can I assist you today?
-      </div>
-    </div>
-    <div class="chat-input-area">
-      <input type="text" class="chat-input" id="chatInput" placeholder="Ask anything or request account support..." onkeydown="handleKeyPress(event)">
-      <button class="send-btn" onclick="sendMessage()">➔</button>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script>
-    // Toggle Logic
-    let isVoiceActive = false;
-    let isChatActive = false;
+    // Templates for embedded code generation
+    const embedTemplates = {
+      voice: `<!-- ElevenLabs AI Voicebot Widget -->
+<script src="https://elevenlabs.io/convai-widget/index.js" async><\/script>
+<elevenlabs-convai agent-id="YOUR_VOICE_AGENT_ID"></elevenlabs-convai>`,
 
-    function toggleVoiceDrawer() {
-      const drawer = document.getElementById('voiceDrawer');
-      const avatar = document.getElementById('voiceAvatar');
-      
-      if (isChatActive) toggleChatDrawer(); // Close chat if open
-      
-      isVoiceActive = !isVoiceActive;
-      drawer.classList.toggle('active', isVoiceActive);
-      
-      if (isVoiceActive) {
-        avatar.classList.add('listening');
-        startSpeechSynthesis("Welcome to Premium Voice Concierge. How can I help you today?");
-      } else {
-        avatar.classList.remove('listening');
-        window.speechSynthesis?.cancel();
-      }
+      chat: `<!-- ElevenLabs AI Chatbot Widget -->
+<script src="https://elevenlabs.io/chat-widget/index.js" async><\/script>
+<elevenlabs-chat agent-id="YOUR_CHAT_AGENT_ID"></elevenlabs-chat>`
+    };
+
+    let activeType = 'voice';
+
+    // Switch between Voicebot and Chatbot modes
+    function activateWidget(type) {
+      activeType = type;
+
+      // Update active state of buttons
+      document.getElementById('btnVoice').classList.toggle('active', type === 'voice');
+      document.getElementById('btnChat').classList.toggle('active', type === 'chat');
+
+      // Update visible preview
+      document.getElementById('voiceStage').classList.toggle('hidden', type !== 'voice');
+      document.getElementById('chatStage').classList.toggle('hidden', type !== 'chat');
+
+      // Update generated embed code snippet
+      document.getElementById('codeSnippet').textContent = embedTemplates[type];
     }
 
-    function toggleChatDrawer() {
-      const drawer = document.getElementById('chatDrawer');
-      if (isVoiceActive) toggleVoiceDrawer(); // Close voice if open
-      
-      isChatActive = !isChatActive;
-      drawer.classList.toggle('active', isChatActive);
+    // Copy snippet functionality
+    function copyEmbedCode() {
+      const code = embedTemplates[activeType];
+      navigator.clipboard.writeText(code);
+      const copyBtn = document.querySelector('.copy-btn');
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => copyBtn.textContent = 'Copy Code', 2000);
     }
 
-    // Interactive Chat Messaging
-    function sendMessage() {
+    // Auto-generate chat testing functionality
+    function sendTestMessage() {
       const input = document.getElementById('chatInput');
-      const messagesContainer = document.getElementById('chatMessages');
+      const container = document.getElementById('chatMessages');
       const text = input.value.trim();
 
       if (!text) return;
 
-      // User Bubble
+      // Add user message
       const userMsg = document.createElement('div');
-      userMsg.className = 'message user';
+      userMsg.className = 'msg user';
       userMsg.textContent = text;
-      messagesContainer.appendChild(userMsg);
+      container.appendChild(userMsg);
 
       input.value = '';
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      container.scrollTop = container.scrollHeight;
 
-      // Simulated Gemini AI Response
+      // Simulated automated agent response
       setTimeout(() => {
         const botMsg = document.createElement('div');
-        botMsg.className = 'message bot';
-        botMsg.textContent = getAIResponse(text);
-        messagesContainer.appendChild(botMsg);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }, 700);
+        botMsg.className = 'msg bot';
+        botMsg.textContent = "I'm receiving your input. This is an auto-generated preview of your assistant in action!";
+        container.appendChild(botMsg);
+        container.scrollTop = container.scrollHeight;
+      }, 600);
     }
 
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') sendMessage();
+    function handleKey(e) {
+      if (e.key === 'Enter') sendTestMessage();
     }
 
-    function getAIResponse(query) {
-      const lower = query.toLowerCase();
-      if (lower.includes('agent') || lower.includes('human') || lower.includes('call')) {
-        return "I am connecting you to your dedicated VIP CX Agent. Priority Wait Time: < 30 seconds.";
-      }
-      if (lower.includes('billing') || lower.includes('invoice') || lower.includes('account')) {
-        return "Your premium subscription account status is active and verified. Would you like me to email your latest statement?";
-      }
-      return "I can assist with account management, instant payouts, or direct transfer to your enterprise agent.";
-    }
-
-    // Text to Speech Helper for Voicebot
-    function startSpeechSynthesis(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
-    function requestHumanAgent() {
-      document.getElementById('voiceStatus').textContent = "Connecting to Live Agent...";
-      document.getElementById('voiceTranscript').textContent = "Escalating call to VIP Support Desk (Session ID: #VIP-9942)...";
-      startSpeechSynthesis("Escalating your session to a live priority representative now.");
-    }
+    // Initialize default state on load
+    window.onload = () => {
+      activateWidget('voice');
+    };
   </script>
 </body>
 </html>
