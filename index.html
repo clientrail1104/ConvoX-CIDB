@@ -1,2429 +1,2014 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OmniAI — Voice + Chat + AI Automation</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<title>ARCHI3D — Architecture & Engineering Intelligence</title>
 
-    :root {
-      --bg: #07111f;
-      --bg2: #0b1728;
-      --panel: rgba(15, 28, 48, 0.88);
-      --panel2: rgba(20, 37, 62, 0.95);
-      --border: rgba(255,255,255,.09);
-      --text: #f4f7fb;
-      --muted: #91a4bd;
-      --primary: #6c63ff;
-      --primary2: #8b7cff;
-      --cyan: #24d9ff;
-      --green: #35df91;
-      --red: #ff5f6d;
-      --yellow: #ffc857;
-    }
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 
-    body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-                   "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 10% 10%, rgba(108,99,255,.18), transparent 30%),
-        radial-gradient(circle at 90% 20%, rgba(36,217,255,.10), transparent 28%),
-        linear-gradient(135deg, #050b14, #07111f 50%, #091525);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+<style>
+:root{
+    --bg:#080b10;
+    --panel:#10151d;
+    --panel2:#151c26;
+    --line:#26303d;
+    --text:#f4f7fb;
+    --muted:#8995a5;
+    --blue:#4da3ff;
+    --cyan:#27e0d0;
+    --orange:#ff9d42;
+    --green:#4fe18a;
+    --danger:#ff5f6d;
+}
 
-    button,
-    input,
-    textarea {
-      font: inherit;
-    }
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-    button {
-      cursor: pointer;
-    }
+html{
+    scroll-behavior:smooth;
+}
 
-    /* =========================
-       APP LAYOUT
-    ========================= */
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+}
 
-    .app {
-      display: grid;
-      grid-template-columns: 250px 1fr;
-      min-height: 100vh;
-    }
+button,
+input{
+    font:inherit;
+}
 
-    /* =========================
-       SIDEBAR
-    ========================= */
+button{
+    cursor:pointer;
+}
 
-    .sidebar {
-      border-right: 1px solid var(--border);
-      background: rgba(5, 12, 23, .82);
-      backdrop-filter: blur(20px);
-      padding: 22px 16px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+/* NAVIGATION */
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      margin-bottom: 35px;
-      padding: 0 8px;
-    }
+.navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 36px;
+    background:rgba(8,11,16,.84);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(255,255,255,.07);
+    z-index:1000;
+}
 
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 13px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--primary), var(--cyan));
-      box-shadow: 0 10px 30px rgba(108,99,255,.35);
-      font-size: 20px;
-    }
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:1px;
+}
 
-    .logo strong {
-      font-size: 19px;
-      letter-spacing: -.4px;
-    }
+.logo-mark{
+    width:36px;
+    height:36px;
+    display:grid;
+    place-items:center;
+    color:#081019;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));
+    clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+    font-weight:900;
+}
 
-    .logo span {
-      display: block;
-      color: var(--muted);
-      font-size: 10px;
-      margin-top: 2px;
-    }
+.nav-links{
+    display:flex;
+    gap:30px;
+}
 
-    .nav {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
+.nav-links a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+}
 
-    .nav button {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 12px 13px;
-      border-radius: 12px;
-      text-align: left;
-      transition: .2s;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.nav-links a:hover{
+    color:white;
+}
 
-    .nav button:hover,
-    .nav button.active {
-      color: white;
-      background: linear-gradient(
-        90deg,
-        rgba(108,99,255,.20),
-        rgba(108,99,255,.06)
-      );
-    }
+.nav-button{
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:white;
+    padding:10px 17px;
+    border-radius:8px;
+}
 
-    .nav-icon {
-      width: 24px;
-      text-align: center;
-    }
+/* HERO */
 
-    .sidebar-bottom {
-      margin-top: auto;
-    }
+.hero{
+    min-height:100vh;
+    padding:140px 7% 80px;
+    display:grid;
+    grid-template-columns:1fr 1.15fr;
+    align-items:center;
+    gap:50px;
+    background:
+        radial-gradient(circle at 80% 40%,rgba(77,163,255,.13),transparent 35%),
+        radial-gradient(circle at 10% 80%,rgba(39,224,208,.07),transparent 30%);
+}
 
-    .status-card {
-      background: rgba(255,255,255,.035);
-      border: 1px solid var(--border);
-      padding: 14px;
-      border-radius: 15px;
-    }
+.eyebrow{
+    color:var(--cyan);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:20px;
+}
 
-    .status-title {
-      color: var(--muted);
-      font-size: 11px;
-      margin-bottom: 9px;
-    }
+.hero h1{
+    font-size:clamp(48px,6vw,88px);
+    line-height:.95;
+    letter-spacing:-5px;
+    margin-bottom:30px;
+}
 
-    .status-online {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 13px;
-    }
+.hero h1 span{
+    color:transparent;
+    -webkit-text-stroke:1px var(--blue);
+}
 
-    .online-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 12px var(--green);
-    }
+.hero p{
+    max-width:580px;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1.7;
+}
 
-    /* =========================
-       MAIN
-    ========================= */
+.hero-buttons{
+    display:flex;
+    gap:14px;
+    margin-top:35px;
+}
 
-    .main {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-    }
+.primary{
+    border:0;
+    background:linear-gradient(135deg,var(--blue),#7467ff);
+    color:white;
+    padding:15px 24px;
+    border-radius:8px;
+    font-weight:700;
+}
 
-    .topbar {
-      height: 72px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      background: rgba(5, 12, 23, .45);
-      backdrop-filter: blur(15px);
-    }
+.secondary{
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:white;
+    padding:15px 24px;
+    border-radius:8px;
+}
 
-    .page-title h1 {
-      font-size: 18px;
-    }
+/* 3D VIEWER */
 
-    .page-title p {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 3px;
-    }
+.viewer{
+    height:590px;
+    position:relative;
+    background:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
+        #0b1017;
+    background-size:40px 40px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 30px 100px rgba(0,0,0,.45);
+}
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+#three-container{
+    width:100%;
+    height:100%;
+}
 
-    .top-btn {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.035);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 9px 12px;
-    }
+.viewer-label{
+    position:absolute;
+    top:18px;
+    left:18px;
+    padding:8px 12px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(8,11,16,.75);
+    backdrop-filter:blur(10px);
+    border-radius:7px;
+    font-size:11px;
+    color:var(--cyan);
+    z-index:5;
+}
 
-    .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #6c63ff, #22d3ee);
-      font-weight: 700;
-      font-size: 12px;
-    }
+.viewer-tools{
+    position:absolute;
+    bottom:18px;
+    right:18px;
+    display:flex;
+    gap:7px;
+    z-index:5;
+}
 
-    /* =========================
-       CONTENT
-    ========================= */
+.viewer-tools button{
+    width:40px;
+    height:40px;
+    background:rgba(8,11,16,.8);
+    color:white;
+    border:1px solid var(--line);
+    border-radius:7px;
+}
 
-    .content {
-      padding: 26px;
-      flex: 1;
-    }
+/* STATS */
 
-    .page {
-      display: none;
-    }
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+}
 
-    .page.active {
-      display: block;
-      animation: fadeIn .25s ease;
-    }
+.stat{
+    padding:28px 35px;
+    border-right:1px solid var(--line);
+}
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(5px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+.stat:last-child{
+    border:0;
+}
 
-    /* =========================
-       DASHBOARD
-    ========================= */
+.stat strong{
+    display:block;
+    font-size:30px;
+    margin-bottom:5px;
+}
 
-    .hero {
-      display: grid;
-      grid-template-columns: 1.4fr .6fr;
-      gap: 18px;
-      margin-bottom: 20px;
-    }
+.stat span{
+    color:var(--muted);
+    font-size:12px;
+}
 
-    .hero-card {
-      min-height: 220px;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 30px;
-      position: relative;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 80% 20%, rgba(36,217,255,.13), transparent 30%),
-        radial-gradient(circle at 20% 80%, rgba(108,99,255,.16), transparent 35%),
+/* SECTIONS */
+
+section.content{
+    padding:110px 7%;
+}
+
+.section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    margin-bottom:45px;
+}
+
+.section-head h2{
+    font-size:42px;
+    letter-spacing:-2px;
+}
+
+.section-head p{
+    max-width:480px;
+    color:var(--muted);
+    line-height:1.6;
+}
+
+/* DISCIPLINES */
+
+.disciplines{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+}
+
+.discipline{
+    min-height:210px;
+    padding:24px;
+    border:1px solid var(--line);
+    background:linear-gradient(145deg,var(--panel),#0c1118);
+    border-radius:12px;
+    transition:.25s;
+}
+
+.discipline:hover{
+    transform:translateY(-7px);
+    border-color:#3c526c;
+}
+
+.discipline-icon{
+    font-size:30px;
+    margin-bottom:35px;
+}
+
+.discipline h3{
+    margin-bottom:10px;
+}
+
+.discipline p{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* PROJECTS */
+
+.project-controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.filter{
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--muted);
+    padding:9px 15px;
+    border-radius:7px;
+}
+
+.filter.active{
+    background:var(--blue);
+    color:white;
+    border-color:var(--blue);
+}
+
+.projects{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.project{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.project-image{
+    height:220px;
+    position:relative;
+    display:flex;
+    align-items:end;
+    padding:18px;
+    background-size:cover;
+    background-position:center;
+}
+
+.project-image.one{
+    background:
+        linear-gradient(transparent,#080b10),
+        linear-gradient(135deg,#244b61,#0d1921);
+}
+
+.project-image.two{
+    background:
+        linear-gradient(transparent,#080b10),
+        linear-gradient(135deg,#49371e,#111);
+}
+
+.project-image.three{
+    background:
+        linear-gradient(transparent,#080b10),
+        linear-gradient(135deg,#253e31,#0d1510);
+}
+
+.project-tag{
+    padding:6px 9px;
+    border-radius:5px;
+    background:rgba(0,0,0,.6);
+    font-size:10px;
+    color:var(--cyan);
+}
+
+.project-info{
+    padding:20px;
+}
+
+.project-info h3{
+    margin-bottom:8px;
+}
+
+.project-info p{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+}
+
+.project-meta{
+    display:flex;
+    justify-content:space-between;
+    margin-top:18px;
+    padding-top:15px;
+    border-top:1px solid var(--line);
+    font-size:11px;
+    color:var(--muted);
+}
+
+/* AI TIMELAPSE */
+
+.ai-section{
+    background:
+        radial-gradient(circle at 80% 30%,rgba(77,163,255,.1),transparent 30%),
+        #0a0f16;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+}
+
+.timeline-layout{
+    display:grid;
+    grid-template-columns:1.5fr .7fr;
+    gap:22px;
+}
+
+.timeline-box{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:14px;
+    padding:25px;
+}
+
+.construction-stage{
+    height:390px;
+    position:relative;
+    overflow:hidden;
+    border-radius:10px;
+    background:
+        linear-gradient(#18222b,#0c1218 65%);
+}
+
+.ground{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    height:80px;
+    background:#202b30;
+}
+
+/* CSS construction animation */
+
+.building{
+    position:absolute;
+    left:50%;
+    bottom:80px;
+    transform:translateX(-50%);
+    width:270px;
+    height:270px;
+}
+
+.floor{
+    position:absolute;
+    left:0;
+    width:100%;
+    height:45px;
+    background:linear-gradient(90deg,#394c59,#8ca1ad,#344852);
+    border:1px solid #91a8b5;
+    transform:scaleY(0);
+    transform-origin:bottom;
+    transition:.5s;
+}
+
+.floor:nth-child(1){bottom:0}
+.floor:nth-child(2){bottom:45px}
+.floor:nth-child(3){bottom:90px}
+.floor:nth-child(4){bottom:135px}
+.floor:nth-child(5){bottom:180px}
+.floor:nth-child(6){bottom:225px}
+
+.windows{
+    position:absolute;
+    inset:8px;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:7px;
+}
+
+.window{
+    background:#5ad9ff;
+    box-shadow:0 0 10px rgba(90,217,255,.5);
+}
+
+.crane{
+    position:absolute;
+    left:18%;
+    bottom:80px;
+    width:4px;
+    height:260px;
+    background:#f0a23b;
+}
+
+.crane-arm{
+    position:absolute;
+    top:0;
+    left:0;
+    width:220px;
+    height:4px;
+    background:#f0a23b;
+}
+
+.hook{
+    position:absolute;
+    top:0;
+    left:175px;
+    width:2px;
+    height:100px;
+    background:#f0a23b;
+}
+
+.crane-hook{
+    position:absolute;
+    top:95px;
+    left:168px;
+    width:16px;
+    height:12px;
+    border-bottom:3px solid #f0a23b;
+    border-left:3px solid transparent;
+    border-right:3px solid transparent;
+}
+
+.time-info{
+    position:absolute;
+    top:18px;
+    left:18px;
+    padding:10px 13px;
+    border-radius:7px;
+    background:rgba(0,0,0,.65);
+    font-size:12px;
+    z-index:5;
+}
+
+.timeline{
+    margin-top:20px;
+}
+
+input[type=range]{
+    width:100%;
+    accent-color:var(--cyan);
+}
+
+.timeline-labels{
+    display:flex;
+    justify-content:space-between;
+    margin-top:8px;
+    color:var(--muted);
+    font-size:10px;
+}
+
+.play-row{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+}
+
+.play{
+    padding:11px 20px;
+    border:0;
+    border-radius:7px;
+    background:var(--cyan);
+    color:#061313;
+    font-weight:800;
+}
+
+.reset{
+    padding:11px 20px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:transparent;
+    color:white;
+}
+
+/* PHASES */
+
+.phase-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.phase{
+    padding:17px;
+    border:1px solid var(--line);
+    background:#0c1118;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.phase.active{
+    border-color:var(--cyan);
+    background:rgba(39,224,208,.06);
+}
+
+.phase-number{
+    font-size:10px;
+    color:var(--cyan);
+}
+
+.phase strong{
+    display:block;
+    margin-top:4px;
+}
+
+/* ENGINEERING */
+
+.engineering{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.engineering-card{
+    padding:28px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+}
+
+.engineering-card h3{
+    margin-bottom:15px;
+}
+
+.engineering-card p{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.7;
+}
+
+.metric{
+    margin-top:22px;
+}
+
+.metric-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:7px;
+    font-size:12px;
+}
+
+.metric-bar{
+    height:5px;
+    background:#202a35;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.metric-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--blue),var(--cyan));
+}
+
+/* CTA */
+
+.cta{
+    margin:50px 7% 100px;
+    padding:70px;
+    text-align:center;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:
+        radial-gradient(circle at center,rgba(77,163,255,.12),transparent 55%),
         var(--panel);
-    }
-
-    .hero-card h2 {
-      font-size: 30px;
-      max-width: 650px;
-      line-height: 1.15;
-      letter-spacing: -1px;
-    }
-
-    .gradient-text {
-      background: linear-gradient(90deg, #8f87ff, #42dcff);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .hero-card p {
-      max-width: 650px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-top: 12px;
-      font-size: 14px;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 23px;
-    }
-
-    .primary-btn {
-      border: 0;
-      color: white;
-      padding: 11px 17px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, var(--primary), var(--primary2));
-      box-shadow: 0 10px 25px rgba(108,99,255,.25);
-    }
-
-    .secondary-btn {
-      border: 1px solid var(--border);
-      color: white;
-      padding: 11px 17px;
-      border-radius: 11px;
-      background: rgba(255,255,255,.04);
-    }
-
-    .orb-card {
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      background: var(--panel);
-      display: grid;
-      place-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .orb {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 35% 30%, #fff, #8b7cff 15%, #6c63ff 40%, #142e55 72%);
-      box-shadow:
-        0 0 35px rgba(108,99,255,.5),
-        0 0 90px rgba(36,217,255,.18);
-      animation: pulse 3s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0%,100% { transform: scale(1); }
-      50% { transform: scale(1.06); }
-    }
-
-    .orb-status {
-      position: absolute;
-      bottom: 22px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    /* =========================
-       STATS
-    ========================= */
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .stat {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: 17px;
-      padding: 18px;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 11px;
-      margin-bottom: 9px;
-    }
-
-    .stat-value {
-      font-size: 25px;
-      font-weight: 700;
-    }
-
-    .stat-change {
-      margin-top: 7px;
-      color: var(--green);
-      font-size: 11px;
-    }
-
-    /* =========================
-       GRID CARDS
-    ========================= */
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .card {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: 18px;
-      padding: 20px;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 17px;
-    }
-
-    .card-header h3 {
-      font-size: 14px;
-    }
-
-    .card-header span {
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .feature-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .feature {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.025);
-      border: 1px solid rgba(255,255,255,.04);
-    }
-
-    .feature-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: rgba(108,99,255,.13);
-      font-size: 17px;
-    }
-
-    .feature strong {
-      font-size: 12px;
-    }
-
-    .feature p {
-      color: var(--muted);
-      font-size: 10px;
-      margin-top: 3px;
-    }
-
-    /* =========================
-       CHAT
-    ========================= */
-
-    .chat-layout {
-      display: grid;
-      grid-template-columns: 260px 1fr 270px;
-      height: calc(100vh - 125px);
-      min-height: 600px;
-      gap: 14px;
-    }
-
-    .chat-sidebar,
-    .chat-window,
-    .agent-panel {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: 18px;
-      overflow: hidden;
-    }
-
-    .chat-sidebar {
-      padding: 15px;
-    }
-
-    .new-chat {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: white;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .conversation {
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 5px;
-      cursor: pointer;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .conversation.active,
-    .conversation:hover {
-      color: white;
-      background: rgba(108,99,255,.13);
-    }
-
-    .chat-window {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat-header {
-      padding: 14px 17px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-
-    .bot-avatar {
-      width: 35px;
-      height: 35px;
-      border-radius: 11px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--primary), var(--cyan));
-    }
-
-    .chat-header strong {
-      font-size: 13px;
-    }
-
-    .chat-header small {
-      display: block;
-      color: var(--green);
-      font-size: 10px;
-      margin-top: 2px;
-    }
-
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 13px;
-    }
-
-    .message {
-      display: flex;
-      gap: 9px;
-      max-width: 82%;
-    }
-
-    .message.user {
-      align-self: flex-end;
-      flex-direction: row-reverse;
-    }
-
-    .bubble {
-      padding: 11px 13px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.055);
-      color: #dce5f0;
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .user .bubble {
-      background: linear-gradient(135deg, #5e55e8, #766bf5);
-      color: white;
-    }
-
-    .message-avatar {
-      width: 27px;
-      height: 27px;
-      flex-shrink: 0;
-      border-radius: 9px;
-      display: grid;
-      place-items: center;
-      font-size: 11px;
-      background: rgba(255,255,255,.07);
-    }
-
-    .chat-input-area {
-      border-top: 1px solid var(--border);
-      padding: 13px;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .chat-input {
-      flex: 1;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.035);
-      color: white;
-      border-radius: 11px;
-      padding: 11px 13px;
-      outline: none;
-    }
-
-    .chat-input:focus {
-      border-color: rgba(108,99,255,.7);
-    }
-
-    .icon-btn {
-      width: 43px;
-      height: 43px;
-      border-radius: 11px;
-      border: 1px solid var(--border);
-      color: white;
-      background: rgba(255,255,255,.04);
-    }
-
-    .send-btn {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
-    /* =========================
-       AGENT PANEL
-    ========================= */
-
-    .agent-panel {
-      padding: 17px;
-    }
-
-    .agent-title {
-      font-size: 13px;
-      margin-bottom: 14px;
-    }
-
-    .agent-status {
-      border: 1px solid rgba(53,223,145,.18);
-      background: rgba(53,223,145,.05);
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 14px;
-    }
-
-    .agent-status strong {
-      font-size: 11px;
-    }
-
-    .agent-status p {
-      color: var(--muted);
-      font-size: 10px;
-      margin-top: 4px;
-    }
-
-    .tool {
-      display: flex;
-      gap: 9px;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-    }
-
-    .tool-icon {
-      width: 28px;
-      height: 28px;
-      display: grid;
-      place-items: center;
-      background: rgba(255,255,255,.05);
-      border-radius: 8px;
-      font-size: 12px;
-    }
-
-    .tool span {
-      font-size: 11px;
-    }
-
-    .tool small {
-      display: block;
-      color: var(--green);
-      margin-top: 2px;
-      font-size: 9px;
-    }
-
-    /* =========================
-       VOICE
-    ========================= */
-
-    .voice-container {
-      max-width: 850px;
-      margin: 0 auto;
-    }
-
-    .voice-card {
-      min-height: 620px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: 24px;
-      padding: 35px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .voice-circle {
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at 35% 30%, #fff, #8b7cff 12%, #6c63ff 40%, #172d50 73%);
-      box-shadow:
-        0 0 45px rgba(108,99,255,.4),
-        0 0 120px rgba(36,217,255,.12);
-      transition: .3s;
-      margin-bottom: 30px;
-    }
-
-    .voice-circle.listening {
-      animation: voicePulse 1.2s infinite;
-      box-shadow:
-        0 0 50px rgba(53,223,145,.55),
-        0 0 130px rgba(53,223,145,.15);
-    }
+}
 
-    @keyframes voicePulse {
-      0%,100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.09);
-      }
-    }
-
-    .mic-icon {
-      font-size: 50px;
-    }
-
-    .voice-card h2 {
-      font-size: 24px;
-    }
-
-    .voice-card p {
-      color: var(--muted);
-      max-width: 500px;
-      margin-top: 10px;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .voice-button {
-      margin-top: 25px;
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      border: 0;
-      background: linear-gradient(135deg, var(--primary), #8b7cff);
-      color: white;
-      font-size: 25px;
-      box-shadow: 0 15px 35px rgba(108,99,255,.3);
-    }
-
-    .voice-transcript {
-      margin-top: 25px;
-      width: 100%;
-      min-height: 80px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.025);
-      border-radius: 14px;
-      padding: 14px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    /* =========================
-       OCR
-    ========================= */
-
-    .ocr-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .upload-box {
-      border: 2px dashed rgba(108,99,255,.4);
-      background: rgba(108,99,255,.04);
-      border-radius: 17px;
-      min-height: 300px;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 30px;
-      transition: .2s;
-    }
-
-    .upload-box.dragover {
-      border-color: var(--cyan);
-      background: rgba(36,217,255,.07);
-    }
-
-    .upload-icon {
-      font-size: 45px;
-      margin-bottom: 12px;
-    }
-
-    .upload-box h3 {
-      font-size: 16px;
-    }
+.cta h2{
+    font-size:48px;
+    letter-spacing:-2px;
+    margin-bottom:18px;
+}
 
-    .upload-box p {
-      color: var(--muted);
-      font-size: 11px;
-      margin: 8px 0 15px;
-    }
+.cta p{
+    color:var(--muted);
+    max-width:600px;
+    margin:auto;
+    line-height:1.6;
+}
 
-    #fileInput {
-      display: none;
-    }
+footer{
+    padding:30px 7%;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted);
+    font-size:12px;
+}
 
-    .ocr-result {
-      min-height: 300px;
-    }
+/* RESPONSIVE */
 
-    .result-field {
-      margin-bottom: 13px;
+@media(max-width:1000px){
+    .hero{
+        grid-template-columns:1fr;
     }
 
-    .result-field label {
-      display: block;
-      color: var(--muted);
-      font-size: 10px;
-      margin-bottom: 5px;
+    .disciplines{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .result-value {
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 10px;
-      background: rgba(255,255,255,.025);
-      font-size: 12px;
+    .projects{
+        grid-template-columns:1fr 1fr;
     }
-
-    /* =========================
-       AUTOMATION
-    ========================= */
 
-    .automation-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+    .timeline-layout{
+        grid-template-columns:1fr;
     }
 
-    .automation-card {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      padding: 19px;
-      border-radius: 17px;
+    .stats{
+        grid-template-columns:1fr 1fr;
     }
+}
 
-    .automation-icon {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      background: rgba(108,99,255,.13);
-      border-radius: 12px;
-      font-size: 20px;
-      margin-bottom: 15px;
+@media(max-width:650px){
+    .navbar{
+        padding:0 18px;
     }
 
-    .automation-card h3 {
-      font-size: 13px;
+    .nav-links{
+        display:none;
     }
 
-    .automation-card p {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
-      margin: 7px 0 15px;
+    .hero{
+        padding:120px 20px 50px;
     }
 
-    .toggle {
-      width: 40px;
-      height: 22px;
-      background: #26364d;
-      border-radius: 20px;
-      padding: 3px;
-      border: 0;
+    .hero h1{
+        letter-spacing:-3px;
     }
 
-    .toggle::after {
-      content: "";
-      display: block;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #8798ad;
-      transition: .2s;
+    .viewer{
+        height:420px;
     }
 
-    .toggle.on {
-      background: var(--primary);
+    section.content{
+        padding:70px 20px;
     }
 
-    .toggle.on::after {
-      transform: translateX(18px);
-      background: white;
+    .disciplines,
+    .projects,
+    .engineering{
+        grid-template-columns:1fr;
     }
 
-    /* =========================
-       TOAST
-    ========================= */
-
-    .toast {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      background: #101d30;
-      border: 1px solid var(--border);
-      color: white;
-      padding: 13px 17px;
-      border-radius: 12px;
-      box-shadow: 0 15px 40px rgba(0,0,0,.3);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: .3s;
-      z-index: 9999;
-      font-size: 12px;
+    .stats{
+        grid-template-columns:1fr 1fr;
     }
 
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
+    .stat{
+        padding:20px;
     }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 1150px) {
-      .chat-layout {
-        grid-template-columns: 220px 1fr;
-      }
 
-      .agent-panel {
-        display: none;
-      }
-
-      .automation-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .cta{
+        margin:30px 20px 70px;
+        padding:45px 20px;
     }
-
-    @media (max-width: 850px) {
-      .app {
-        grid-template-columns: 70px 1fr;
-      }
-
-      .sidebar {
-        padding: 15px 10px;
-      }
 
-      .logo strong,
-      .logo span,
-      .nav button span:not(.nav-icon),
-      .status-card {
-        display: none;
-      }
-
-      .logo {
-        justify-content: center;
-        padding: 0;
-      }
-
-      .nav button {
-        justify-content: center;
-      }
-
-      .hero,
-      .grid-2,
-      .ocr-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .chat-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .chat-sidebar {
-        display: none;
-      }
+    .cta h2{
+        font-size:35px;
     }
-
-    @media (max-width: 600px) {
-      .content {
-        padding: 15px;
-      }
-
-      .topbar {
-        padding: 0 15px;
-      }
-
-      .hero-card h2 {
-        font-size: 24px;
-      }
-
-      .orb-card {
-        min-height: 180px;
-      }
-
-      .stats,
-      .automation-grid {
-        grid-template-columns: 1fr;
-      }
 
-      .top-btn {
-        display: none;
-      }
+    footer{
+        padding:25px 20px;
+        flex-direction:column;
+        gap:10px;
     }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-<div class="app">
+<!-- NAVIGATION -->
 
-  <!-- =========================
-       SIDEBAR
-  ========================== -->
-
-  <aside class="sidebar">
+<nav class="navbar">
 
     <div class="logo">
-      <div class="logo-icon">✦</div>
-      <div>
-        <strong>OmniAI</strong>
-        <span>AI Automation Platform</span>
-      </div>
+        <div class="logo-mark">A</div>
+        ARCHI3D
     </div>
 
-    <nav class="nav">
-
-      <button class="active" data-page="dashboard">
-        <span class="nav-icon">⌂</span>
-        <span>Dashboard</span>
-      </button>
-
-      <button data-page="chat">
-        <span class="nav-icon">💬</span>
-        <span>AI Chat</span>
-      </button>
-
-      <button data-page="voice">
-        <span class="nav-icon">🎙️</span>
-        <span>Voicebot</span>
-      </button>
-
-      <button data-page="ocr">
-        <span class="nav-icon">📄</span>
-        <span>OCR / Documents</span>
-      </button>
-
-      <button data-page="automation">
-        <span class="nav-icon">⚙️</span>
-        <span>Automation</span>
-      </button>
-
-      <button data-page="analytics">
-        <span class="nav-icon">📊</span>
-        <span>Analytics</span>
-      </button>
-
-    </nav>
-
-    <div class="sidebar-bottom">
-
-      <div class="status-card">
-        <div class="status-title">SYSTEM STATUS</div>
-
-        <div class="status-online">
-          <span class="online-dot"></span>
-          All systems operational
-        </div>
-      </div>
-
+    <div class="nav-links">
+        <a href="#projects">Projects</a>
+        <a href="#disciplines">Engineering</a>
+        <a href="#ai">AI Time-Lapse</a>
+        <a href="#analysis">Analysis</a>
     </div>
 
-  </aside>
+    <button class="nav-button" onclick="scrollToSection('ai')">
+        Launch Simulation
+    </button>
+
+</nav>
 
 
-  <!-- =========================
-       MAIN
-  ========================== -->
+<!-- HERO -->
 
-  <main class="main">
+<header class="hero">
 
-    <header class="topbar">
+    <div>
 
-      <div class="page-title">
-        <h1 id="pageTitle">AI Operations Dashboard</h1>
-        <p>Voice • Chat • OCR • Agents • Automation</p>
-      </div>
-
-      <div class="top-actions">
-
-        <button class="top-btn" onclick="showToast('API connection manager opened')">
-          🔌 API
-        </button>
-
-        <button class="top-btn" onclick="showToast('Notifications are clear')">
-          🔔
-        </button>
-
-        <div class="avatar">AI</div>
-
-      </div>
-
-    </header>
-
-
-    <div class="content">
-
-      <!-- =========================
-           DASHBOARD
-      ========================== -->
-
-      <section id="dashboard" class="page active">
-
-        <div class="hero">
-
-          <div class="hero-card">
-
-            <h2>
-              Build your
-              <span class="gradient-text">AI workforce.</span>
-            </h2>
-
-            <p>
-              One platform for AI chat, voice conversations,
-              document intelligence, RPA automation, workflows,
-              and intelligent agents.
-            </p>
-
-            <div class="hero-actions">
-
-              <button class="primary-btn"
-                      onclick="switchPage('chat')">
-                Start AI Chat
-              </button>
-
-              <button class="secondary-btn"
-                      onclick="switchPage('voice')">
-                🎙 Start Voice
-              </button>
-
-            </div>
-
-          </div>
-
-          <div class="orb-card">
-
-            <div class="orb"></div>
-
-            <div class="orb-status">
-              ● AI Agent Online
-            </div>
-
-          </div>
-
+        <div class="eyebrow">
+            Architecture × Engineering × AI
         </div>
 
+        <h1>
+            BUILD THE
+            <span>FUTURE</span>
+        </h1>
 
-        <div class="stats">
+        <p>
+            Explore architecture and engineering projects through
+            interactive 3D models, structural intelligence and
+            AI-powered construction time-lapse simulations.
+        </p>
 
-          <div class="stat">
-            <div class="stat-label">CONVERSATIONS</div>
-            <div class="stat-value">2,481</div>
-            <div class="stat-change">↑ 18.4%</div>
-          </div>
+        <div class="hero-buttons">
 
-          <div class="stat">
-            <div class="stat-label">VOICE MINUTES</div>
-            <div class="stat-value">8,942</div>
-            <div class="stat-change">↑ 24.1%</div>
-          </div>
-
-          <div class="stat">
-            <div class="stat-label">DOCUMENTS</div>
-            <div class="stat-value">1,293</div>
-            <div class="stat-change">↑ 31.7%</div>
-          </div>
-
-          <div class="stat">
-            <div class="stat-label">AUTOMATIONS</div>
-            <div class="stat-value">6,721</div>
-            <div class="stat-change">↑ 12.8%</div>
-          </div>
-
-        </div>
-
-
-        <div class="grid-2">
-
-          <div class="card">
-
-            <div class="card-header">
-              <h3>AI Capabilities</h3>
-              <span>ACTIVE</span>
-            </div>
-
-            <div class="feature-list">
-
-              <div class="feature">
-                <div class="feature-icon">🧠</div>
-                <div>
-                  <strong>AI Agent</strong>
-                  <p>Reasoning, tools and autonomous actions</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">📚</div>
-                <div>
-                  <strong>RAG Knowledge</strong>
-                  <p>Search your private company knowledge</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">👁️</div>
-                <div>
-                  <strong>Computer Vision</strong>
-                  <p>Understand images and visual information</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">🔊</div>
-                <div>
-                  <strong>Voice Intelligence</strong>
-                  <p>Speech recognition and natural voice</p>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="card-header">
-              <h3>Automation Stack</h3>
-              <span>ONLINE</span>
-            </div>
-
-            <div class="feature-list">
-
-              <div class="feature">
-                <div class="feature-icon">📄</div>
-                <div>
-                  <strong>OCR / IDP</strong>
-                  <p>Extract structured data from documents</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">🤖</div>
-                <div>
-                  <strong>RPA</strong>
-                  <p>Automate browser and desktop processes</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">🔌</div>
-                <div>
-                  <strong>API Automation</strong>
-                  <p>Connect CRM, ERP and business systems</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">🔐</div>
-                <div>
-                  <strong>Human Approval</strong>
-                  <p>Escalate uncertain decisions to people</p>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =========================
-           CHAT
-      ========================== -->
-
-      <section id="chat" class="page">
-
-        <div class="chat-layout">
-
-          <aside class="chat-sidebar">
-
-            <button class="new-chat" onclick="newChat()">
-              ＋ New Conversation
+            <button class="primary"
+                    onclick="scrollToSection('projects')">
+                Explore Projects
             </button>
 
-            <div class="conversation active">
-              Customer Support Agent
-            </div>
-
-            <div class="conversation">
-              Invoice Assistant
-            </div>
-
-            <div class="conversation">
-              Sales Agent
-            </div>
-
-            <div class="conversation">
-              HR Assistant
-            </div>
-
-            <div class="conversation">
-              Document Analyst
-            </div>
-
-          </aside>
-
-
-          <div class="chat-window">
-
-            <div class="chat-header">
-
-              <div class="bot-avatar">✦</div>
-
-              <div>
-                <strong>OmniAI Agent</strong>
-                <small>● Online</small>
-              </div>
-
-            </div>
-
-
-            <div class="messages" id="messages">
-
-              <div class="message">
-
-                <div class="message-avatar">✦</div>
-
-                <div class="bubble">
-                  Hello! I'm your AI operations agent.
-                  I can answer questions, analyze documents,
-                  perform workflows and interact with your
-                  connected business systems.
-                </div>
-
-              </div>
-
-              <div class="message">
-
-                <div class="message-avatar">✦</div>
-
-                <div class="bubble">
-                  What would you like me to help you with?
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="chat-input-area">
-
-              <div class="input-row">
-
-                <button class="icon-btn"
-                        onclick="switchPage('voice')">
-                  🎙
-                </button>
-
-                <input
-                  id="chatInput"
-                  class="chat-input"
-                  placeholder="Message your AI agent..."
-                  autocomplete="off"
-                />
-
-                <button class="icon-btn"
-                        onclick="document.getElementById('fileInput').click()">
-                  📎
-                </button>
-
-                <button class="icon-btn send-btn"
-                        onclick="sendMessage()">
-                  ➤
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <aside class="agent-panel">
-
-            <div class="agent-title">
-              Agent Tools
-            </div>
-
-            <div class="agent-status">
-              <strong>AI AGENT READY</strong>
-              <p>Tools available for this conversation</p>
-            </div>
-
-            <div class="tool">
-              <div class="tool-icon">🔎</div>
-              <div>
-                <span>Knowledge Search</span>
-                <small>READY</small>
-              </div>
-            </div>
-
-            <div class="tool">
-              <div class="tool-icon">📄</div>
-              <div>
-                <span>OCR / Documents</span>
-                <small>READY</small>
-              </div>
-            </div>
-
-            <div class="tool">
-              <div class="tool-icon">🔌</div>
-              <div>
-                <span>API Connector</span>
-                <small>READY</small>
-              </div>
-            </div>
-
-            <div class="tool">
-              <div class="tool-icon">🤖</div>
-              <div>
-                <span>RPA Worker</span>
-                <small>READY</small>
-              </div>
-            </div>
-
-            <div class="tool">
-              <div class="tool-icon">📅</div>
-              <div>
-                <span>Calendar</span>
-                <small>READY</small>
-              </div>
-            </div>
-
-          </aside>
-
-        </div>
-
-      </section>
-
-
-      <!-- =========================
-           VOICE
-      ========================== -->
-
-      <section id="voice" class="page">
-
-        <div class="voice-container">
-
-          <div class="voice-card">
-
-            <div class="voice-circle" id="voiceCircle">
-              <div class="mic-icon">🎙️</div>
-            </div>
-
-            <h2 id="voiceStatus">
-              Voice AI Ready
-            </h2>
-
-            <p>
-              Click the microphone and start speaking.
-              Your browser will convert speech to text,
-              send it through the demo AI agent, and
-              respond using synthetic speech.
-            </p>
-
-            <button
-              id="voiceButton"
-              class="voice-button"
-              onclick="toggleVoice()">
-              🎙
+            <button class="secondary"
+                    onclick="scrollToSection('ai')">
+                View AI Construction
             </button>
 
-            <div class="voice-transcript" id="voiceTranscript">
-              Voice transcript will appear here...
-            </div>
-
-          </div>
-
         </div>
-
-      </section>
-
-
-      <!-- =========================
-           OCR
-      ========================== -->
-
-      <section id="ocr" class="page">
-
-        <div class="ocr-layout">
-
-          <div class="card">
-
-            <div class="card-header">
-              <h3>Document Intelligence</h3>
-              <span>OCR / IDP</span>
-            </div>
-
-            <div
-              class="upload-box"
-              id="uploadBox"
-              onclick="document.getElementById('fileInput').click()">
-
-              <div>
-
-                <div class="upload-icon">📄</div>
-
-                <h3>Upload a document</h3>
-
-                <p>
-                  PDF, JPG, PNG or scanned document
-                </p>
-
-                <button class="primary-btn"
-                        onclick="event.stopPropagation(); document.getElementById('fileInput').click()">
-                  Choose File
-                </button>
-
-              </div>
-
-            </div>
-
-            <input
-              type="file"
-              id="fileInput"
-              accept=".pdf,.png,.jpg,.jpeg,.webp"
-            />
-
-          </div>
-
-
-          <div class="card ocr-result">
-
-            <div class="card-header">
-              <h3>Extracted Data</h3>
-              <span id="ocrStatus">WAITING</span>
-            </div>
-
-            <div class="result-field">
-              <label>DOCUMENT</label>
-              <div class="result-value" id="ocrDocument">
-                No document uploaded
-              </div>
-            </div>
-
-            <div class="result-field">
-              <label>DOCUMENT TYPE</label>
-              <div class="result-value" id="ocrType">
-                —
-              </div>
-            </div>
-
-            <div class="result-field">
-              <label>EXTRACTED TEXT</label>
-              <div class="result-value" id="ocrText">
-                —
-              </div>
-            </div>
-
-            <div class="result-field">
-              <label>AI STATUS</label>
-              <div class="result-value" id="ocrAI">
-                Waiting for document
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =========================
-           AUTOMATION
-      ========================== -->
-
-      <section id="automation" class="page">
-
-        <div class="automation-grid">
-
-          <div class="automation-card">
-
-            <div class="automation-icon">📧</div>
-
-            <h3>Email Automation</h3>
-
-            <p>
-              Read incoming emails, classify them,
-              generate responses and trigger workflows.
-            </p>
-
-            <button class="toggle on"
-                    onclick="toggleAutomation(this)"></button>
-
-          </div>
-
-
-          <div class="automation-card">
-
-            <div class="automation-icon">📄</div>
-
-            <h3>Invoice Processing</h3>
-
-            <p>
-              OCR invoices, extract fields, validate
-              against purchase orders and route approvals.
-            </p>
-
-            <button class="toggle on"
-                    onclick="toggleAutomation(this)"></button>
-
-          </div>
-
-
-          <div class="automation-card">
-
-            <div class="automation-icon">🤖</div>
-
-            <h3>RPA Worker</h3>
-
-            <p>
-              Automate repetitive browser and desktop
-              processes using software robots.
-            </p>
-
-            <button class="toggle"
-                    onclick="toggleAutomation(this)"></button>
-
-          </div>
-
-
-          <div class="automation-card">
-
-            <div class="automation-icon">🔌</div>
-
-            <h3>CRM Integration</h3>
-
-            <p>
-              Automatically create leads, update customers,
-              create tickets and retrieve records.
-            </p>
-
-            <button class="toggle on"
-                    onclick="toggleAutomation(this)"></button>
-
-          </div>
-
-
-          <div class="automation-card">
-
-            <div class="automation-icon">📅</div>
-
-            <h3>Appointment Agent</h3>
-
-            <p>
-              AI can check availability and schedule
-              appointments through connected calendars.
-            </p>
-
-            <button class="toggle"
-                    onclick="toggleAutomation(this)"></button>
-
-          </div>
-
-
-          <div class="automation-card">
-
-            <div class="automation-icon">🛡️</div>
-
-            <h3>Fraud Detection</h3>
-
-            <p>
-              Detect suspicious transactions and escalate
-              unusual cases for human review.
-            </p>
-
-            <button class="toggle on"
-                    onclick="toggleAutomation(this)"></button>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =========================
-           ANALYTICS
-      ========================== -->
-
-      <section id="analytics" class="page">
-
-        <div class="grid-2">
-
-          <div class="card">
-
-            <div class="card-header">
-              <h3>AI Usage</h3>
-              <span>LAST 30 DAYS</span>
-            </div>
-
-            <div style="height:230px;display:flex;align-items:end;gap:8px;padding:20px 5px">
-
-              <div style="height:40%;flex:1;background:#6c63ff;border-radius:6px 6px 0 0"></div>
-              <div style="height:55%;flex:1;background:#6c63ff;border-radius:6px 6px 0 0"></div>
-              <div style="height:48%;flex:1;background:#6c63ff;border-radius:6px 6px 0 0"></div>
-              <div style="height:68%;flex:1;background:#6c63ff;border-radius:6px 6px 0 0"></div>
-              <div style="height:62%;flex:1;background:#6c63ff;border-radius:6px 6px 0 0"></div>
-              <div style="height:79%;flex:1;background:#7b72ff;border-radius:6px 6px 0 0"></div>
-              <div style="height:90%;flex:1;background:#42dcff;border-radius:6px 6px 0 0"></div>
-
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="card-header">
-              <h3>System Components</h3>
-              <span>STATUS</span>
-            </div>
-
-            <div class="feature-list">
-
-              <div class="feature">
-                <div class="feature-icon">🧠</div>
-                <div>
-                  <strong>AI Engine</strong>
-                  <p style="color:#35df91">● Operational</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">🎙️</div>
-                <div>
-                  <strong>Voice Engine</strong>
-                  <p style="color:#35df91">● Operational</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">📄</div>
-                <div>
-                  <strong>OCR Engine</strong>
-                  <p style="color:#35df91">● Operational</p>
-                </div>
-              </div>
-
-              <div class="feature">
-                <div class="feature-icon">🤖</div>
-                <div>
-                  <strong>RPA Workers</strong>
-                  <p style="color:#35df91">● Operational</p>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
 
     </div>
 
-  </main>
+
+    <div class="viewer">
+
+        <div class="viewer-label">
+            LIVE 3D BIM VIEWER · ROTATE / ZOOM
+        </div>
+
+        <div id="three-container"></div>
+
+        <div class="viewer-tools">
+
+            <button onclick="resetCamera()">⌂</button>
+            <button onclick="toggleWireframe()">◇</button>
+            <button onclick="toggleAutoRotate()">↻</button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+    <div class="stat">
+        <strong>3D</strong>
+        <span>Interactive Models</span>
+    </div>
+
+    <div class="stat">
+        <strong>AI</strong>
+        <span>Construction Simulation</span>
+    </div>
+
+    <div class="stat">
+        <strong>BIM</strong>
+        <span>Digital Building Data</span>
+    </div>
+
+    <div class="stat">
+        <strong>24/7</strong>
+        <span>Project Intelligence</span>
+    </div>
 
 </div>
 
 
-<!-- Toast -->
+<!-- DISCIPLINES -->
 
-<div class="toast" id="toast"></div>
+<section class="content" id="disciplines">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">MULTIDISCIPLINARY</div>
+            <h2>Engineering Universe</h2>
+        </div>
+
+        <p>
+            Bring architectural design, structural engineering,
+            MEP systems and construction intelligence into one
+            visual environment.
+        </p>
+
+    </div>
+
+
+    <div class="disciplines">
+
+        <div class="discipline">
+            <div class="discipline-icon">🏛️</div>
+            <h3>Architecture</h3>
+            <p>
+                Building form, façade systems, spatial planning,
+                materials and architectural visualization.
+            </p>
+        </div>
+
+        <div class="discipline">
+            <div class="discipline-icon">🏗️</div>
+            <h3>Structural</h3>
+            <p>
+                Columns, beams, slabs, foundations, structural
+                loads and building stability.
+            </p>
+        </div>
+
+        <div class="discipline">
+            <div class="discipline-icon">⚡</div>
+            <h3>Electrical</h3>
+            <p>
+                Power distribution, lighting, equipment and
+                building electrical systems.
+            </p>
+        </div>
+
+        <div class="discipline">
+            <div class="discipline-icon">💧</div>
+            <h3>MEP</h3>
+            <p>
+                HVAC, plumbing, fire protection and mechanical
+                building services.
+            </p>
+        </div>
+
+        <div class="discipline">
+            <div class="discipline-icon">🌐</div>
+            <h3>Civil</h3>
+            <p>
+                Roads, terrain, drainage, infrastructure and
+                site development.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PROJECTS -->
+
+<section class="content" id="projects">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">DIGITAL TWIN LIBRARY</div>
+            <h2>Featured Projects</h2>
+        </div>
+
+        <div class="project-controls">
+
+            <button class="filter active"
+                    onclick="filterProjects('all',this)">
+                All
+            </button>
+
+            <button class="filter"
+                    onclick="filterProjects('tower',this)">
+                Towers
+            </button>
+
+            <button class="filter"
+                    onclick="filterProjects('residential',this)">
+                Residential
+            </button>
+
+            <button class="filter"
+                    onclick="filterProjects('infrastructure',this)">
+                Infrastructure
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="projects">
+
+        <article class="project" data-category="tower">
+
+            <div class="project-image one">
+                <span class="project-tag">COMMERCIAL TOWER</span>
+            </div>
+
+            <div class="project-info">
+
+                <h3>Vertical Nexus</h3>
+
+                <p>
+                    48-storey mixed-use tower with integrated
+                    structural and MEP systems.
+                </p>
+
+                <div class="project-meta">
+                    <span>48 FLOORS</span>
+                    <span>186 m</span>
+                    <span>BIM READY</span>
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <article class="project" data-category="residential">
+
+            <div class="project-image two">
+                <span class="project-tag">RESIDENTIAL</span>
+            </div>
+
+            <div class="project-info">
+
+                <h3>Skyline Residences</h3>
+
+                <p>
+                    High-density residential development with
+                    modular construction systems.
+                </p>
+
+                <div class="project-meta">
+                    <span>32 FLOORS</span>
+                    <span>420 UNITS</span>
+                    <span>SMART HOME</span>
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <article class="project" data-category="infrastructure">
+
+            <div class="project-image three">
+                <span class="project-tag">INFRASTRUCTURE</span>
+            </div>
+
+            <div class="project-info">
+
+                <h3>Green Transit Hub</h3>
+
+                <p>
+                    Multimodal transportation hub integrating
+                    architecture and civil infrastructure.
+                </p>
+
+                <div class="project-meta">
+                    <span>85,000 m²</span>
+                    <span>TRANSIT</span>
+                    <span>GREEN</span>
+                </div>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- AI TIMELAPSE -->
+
+<section class="content ai-section" id="ai">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">GENERATIVE CONSTRUCTION</div>
+            <h2>AI Construction Time-Lapse</h2>
+        </div>
+
+        <p>
+            Simulate the complete construction lifecycle from
+            site preparation to final building completion.
+        </p>
+
+    </div>
+
+
+    <div class="timeline-layout">
+
+        <div class="timeline-box">
+
+            <div class="construction-stage">
+
+                <div class="time-info">
+                    <span id="dayLabel">DAY 0</span>
+                    ·
+                    <span id="stageLabel">Site Preparation</span>
+                </div>
+
+                <div class="crane">
+                    <div class="crane-arm"></div>
+                    <div class="hook"></div>
+                    <div class="crane-hook"></div>
+                </div>
+
+                <div class="building">
+
+                    <div class="floor">
+                        <div class="windows">
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                        </div>
+                    </div>
+
+                    <div class="floor">
+                        <div class="windows">
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                        </div>
+                    </div>
+
+                    <div class="floor">
+                        <div class="windows">
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                        </div>
+                    </div>
+
+                    <div class="floor">
+                        <div class="windows">
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                        </div>
+                    </div>
+
+                    <div class="floor">
+                        <div class="windows">
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                        </div>
+                    </div>
+
+                    <div class="floor">
+                        <div class="windows">
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                            <span class="window"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="ground"></div>
+
+            </div>
+
+
+            <div class="timeline">
+
+                <input
+                    type="range"
+                    id="timeline"
+                    min="0"
+                    max="100"
+                    value="0"
+                    oninput="updateConstruction(this.value)"
+                >
+
+                <div class="timeline-labels">
+                    <span>DAY 0</span>
+                    <span>DAY 90</span>
+                    <span>DAY 180</span>
+                    <span>DAY 270</span>
+                    <span>DAY 365</span>
+                </div>
+
+            </div>
+
+
+            <div class="play-row">
+
+                <button class="play"
+                        id="playButton"
+                        onclick="toggleSimulation()">
+                    ▶ PLAY AI SIMULATION
+                </button>
+
+                <button class="reset"
+                        onclick="resetSimulation()">
+                    RESET
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="timeline-box">
+
+            <div class="eyebrow">CONSTRUCTION PHASES</div>
+
+            <div class="phase-list">
+
+                <div class="phase active"
+                     onclick="selectPhase(0)">
+                    <div class="phase-number">01 · DAY 0–45</div>
+                    <strong>Site Preparation</strong>
+                </div>
+
+                <div class="phase"
+                     onclick="selectPhase(20)">
+                    <div class="phase-number">02 · DAY 45–90</div>
+                    <strong>Foundation</strong>
+                </div>
+
+                <div class="phase"
+                     onclick="selectPhase(40)">
+                    <div class="phase-number">03 · DAY 90–180</div>
+                    <strong>Structural Frame</strong>
+                </div>
+
+                <div class="phase"
+                     onclick="selectPhase(65)">
+                    <div class="phase-number">04 · DAY 180–270</div>
+                    <strong>Building Envelope</strong>
+                </div>
+
+                <div class="phase"
+                     onclick="selectPhase(82)">
+                    <div class="phase-number">05 · DAY 270–330</div>
+                    <strong>MEP Installation</strong>
+                </div>
+
+                <div class="phase"
+                     onclick="selectPhase(100)">
+                    <div class="phase-number">06 · DAY 330–365</div>
+                    <strong>Completion</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ENGINEERING ANALYSIS -->
+
+<section class="content" id="analysis">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">LIVE BUILDING INTELLIGENCE</div>
+            <h2>Engineering Analysis</h2>
+        </div>
+
+        <p>
+            A visual overview of key project performance indicators.
+        </p>
+
+    </div>
+
+
+    <div class="engineering">
+
+        <div class="engineering-card">
+
+            <h3>Structural Performance</h3>
+
+            <p>
+                AI-assisted analysis of structural systems,
+                building loads and overall frame performance.
+            </p>
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Structural Stability</span>
+                    <strong>94%</strong>
+                </div>
+
+                <div class="metric-bar">
+                    <div class="metric-fill" style="width:94%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Material Efficiency</span>
+                    <strong>87%</strong>
+                </div>
+
+                <div class="metric-bar">
+                    <div class="metric-fill" style="width:87%"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="engineering-card">
+
+            <h3>Construction Progress</h3>
+
+            <p>
+                Digital project monitoring based on simulated
+                construction sequencing.
+            </p>
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Overall Completion</span>
+                    <strong id="completionValue">0%</strong>
+                </div>
+
+                <div class="metric-bar">
+                    <div
+                        class="metric-fill"
+                        id="completionBar"
+                        style="width:0%">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Schedule Confidence</span>
+                    <strong>91%</strong>
+                </div>
+
+                <div class="metric-bar">
+                    <div class="metric-fill" style="width:91%"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CTA -->
+
+<div class="cta">
+
+    <div class="eyebrow">NEXT GENERATION AEC PLATFORM</div>
+
+    <h2>Design. Simulate. Build.</h2>
+
+    <p>
+        Turn architecture and engineering data into immersive
+        digital experiences with 3D visualization and intelligent
+        construction simulation.
+    </p>
+
+    <br>
+
+    <button class="primary"
+            onclick="scrollToSection('projects')">
+        Explore Digital Buildings
+    </button>
+
+</div>
+
+
+<footer>
+
+    <span>© 2026 ARCHI3D</span>
+
+    <span>
+        Architecture · Engineering · BIM · AI Construction
+    </span>
+
+</footer>
 
 
 <script>
 
-  /* =====================================
-     PAGE NAVIGATION
-  ===================================== */
+/* ============================================================
+   THREE.JS 3D BUILDING
+============================================================ */
 
-  const pageTitles = {
-    dashboard: "AI Operations Dashboard",
-    chat: "AI Chat",
-    voice: "Voice AI",
-    ocr: "OCR & Document Intelligence",
-    automation: "Automation Center",
-    analytics: "Analytics"
-  };
+let scene;
+let camera;
+let renderer;
+let controls;
+let buildingGroup;
+let wireframe = false;
+let autoRotate = true;
 
-  function switchPage(page) {
+const container = document.getElementById("three-container");
 
-    document.querySelectorAll(".page").forEach(section => {
-      section.classList.remove("active");
+function init3D(){
+
+    scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x0b1017);
+
+
+    camera = new THREE.PerspectiveCamera(
+        45,
+        container.clientWidth / container.clientHeight,
+        0.1,
+        1000
+    );
+
+    camera.position.set(8,6,9);
+
+
+    renderer = new THREE.WebGLRenderer({
+        antialias:true,
+        alpha:true
     });
 
-    const selected = document.getElementById(page);
+    renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio,2)
+    );
 
-    if (selected) {
-      selected.classList.add("active");
-    }
+    renderer.setSize(
+        container.clientWidth,
+        container.clientHeight
+    );
 
-    document.querySelectorAll(".nav button").forEach(btn => {
-      btn.classList.remove("active");
+    container.appendChild(renderer.domElement);
 
-      if (btn.dataset.page === page) {
-        btn.classList.add("active");
-      }
+
+    /* LIGHTING */
+
+    const ambient = new THREE.AmbientLight(
+        0xffffff,
+        1.7
+    );
+
+    scene.add(ambient);
+
+
+    const blueLight = new THREE.PointLight(
+        0x4da3ff,
+        80,
+        30
+    );
+
+    blueLight.position.set(5,8,5);
+
+    scene.add(blueLight);
+
+
+    const cyanLight = new THREE.PointLight(
+        0x27e0d0,
+        50,
+        25
+    );
+
+    cyanLight.position.set(-6,4,-3);
+
+    scene.add(cyanLight);
+
+
+    /* BUILDING */
+
+    buildingGroup = new THREE.Group();
+
+    scene.add(buildingGroup);
+
+
+    const material = new THREE.MeshStandardMaterial({
+        color:0x6d8798,
+        metalness:.25,
+        roughness:.45
     });
 
-    document.getElementById("pageTitle").textContent =
-      pageTitles[page] || "OmniAI";
 
-  }
-
-
-  document.querySelectorAll(".nav button").forEach(button => {
-
-    button.addEventListener("click", () => {
-      switchPage(button.dataset.page);
+    const glass = new THREE.MeshStandardMaterial({
+        color:0x159cc4,
+        transparent:true,
+        opacity:.55,
+        metalness:.7,
+        roughness:.15
     });
 
-  });
 
+    /* MAIN TOWER */
 
-  /* =====================================
-     TOAST
-  ===================================== */
+    const tower = new THREE.Mesh(
+        new THREE.BoxGeometry(4,9,4),
+        material
+    );
 
-  let toastTimer;
+    tower.position.y=4.5;
 
-  function showToast(message) {
+    buildingGroup.add(tower);
 
-    const toast = document.getElementById("toast");
 
-    toast.textContent = message;
-    toast.classList.add("show");
+    /* GLASS CORE */
 
-    clearTimeout(toastTimer);
+    const core = new THREE.Mesh(
+        new THREE.BoxGeometry(2.5,9.2,2.5),
+        glass
+    );
 
-    toastTimer = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2500);
+    core.position.y=4.6;
 
-  }
+    buildingGroup.add(core);
 
 
-  /* =====================================
-     CHAT
-  ===================================== */
+    /* FLOORS */
 
-  const chatInput = document.getElementById("chatInput");
+    for(let y=1;y<9;y++){
 
-  chatInput.addEventListener("keydown", function(event) {
-
-    if (event.key === "Enter") {
-      sendMessage();
-    }
-
-  });
-
-
-  function addMessage(text, type = "bot") {
-
-    const messages = document.getElementById("messages");
-
-    const message = document.createElement("div");
-
-    message.className = "message " + (type === "user" ? "user" : "");
-
-    message.innerHTML = `
-      <div class="message-avatar">
-        ${type === "user" ? "👤" : "✦"}
-      </div>
-
-      <div class="bubble">
-        ${escapeHtml(text)}
-      </div>
-    `;
-
-    messages.appendChild(message);
-
-    messages.scrollTop = messages.scrollHeight;
-
-  }
-
-
-  function sendMessage() {
-
-    const input = document.getElementById("chatInput");
-
-    const text = input.value.trim();
-
-    if (!text) return;
-
-    addMessage(text, "user");
-
-    input.value = "";
-
-    showTyping();
-
-    setTimeout(() => {
-
-      removeTyping();
-
-      const response = generateAIResponse(text);
-
-      addMessage(response, "bot");
-
-      speak(response);
-
-    }, 900);
-
-  }
-
-
-  function showTyping() {
-
-    const messages = document.getElementById("messages");
-
-    const typing = document.createElement("div");
-
-    typing.className = "message";
-    typing.id = "typing";
-
-    typing.innerHTML = `
-      <div class="message-avatar">✦</div>
-      <div class="bubble">AI is thinking...</div>
-    `;
-
-    messages.appendChild(typing);
-
-    messages.scrollTop = messages.scrollHeight;
-
-  }
-
-
-  function removeTyping() {
-
-    const typing = document.getElementById("typing");
-
-    if (typing) {
-      typing.remove();
-    }
-
-  }
-
-
-  function generateAIResponse(text) {
-
-    const lower = text.toLowerCase();
-
-    if (lower.includes("invoice")) {
-
-      return "I can process invoices using OCR, extract supplier information, invoice numbers, dates, totals and tax, then validate the data and trigger an approval workflow.";
-
-    }
-
-    if (lower.includes("ocr")) {
-
-      return "OCR can convert scanned documents and images into machine-readable text. Combined with AI document understanding, we can extract structured fields and send them into your ERP, CRM or database.";
-
-    }
-
-    if (lower.includes("rpa")) {
-
-      return "RPA can execute repetitive actions in legacy applications, browsers and desktop software. An AI agent can decide when the RPA worker should execute those actions.";
-
-    }
-
-    if (lower.includes("voice")) {
-
-      return "The voice agent can listen through speech recognition, send the transcript to the AI agent, execute tools and return a spoken response through text-to-speech.";
-
-    }
-
-    if (lower.includes("hello") || lower.includes("hi")) {
-
-      return "Hello! I'm your OmniAI agent. I can help with chat, voice, OCR, documents, workflows, RPA and business automation.";
-
-    }
-
-    return "I understand. In the production version, I can connect this conversation to an AI model, RAG knowledge base, APIs, CRM, ERP, OCR and RPA tools to actually perform the requested task.";
-
-  }
-
-
-  function newChat() {
-
-    document.getElementById("messages").innerHTML = `
-      <div class="message">
-
-        <div class="message-avatar">✦</div>
-
-        <div class="bubble">
-          New conversation started. How can I help?
-        </div>
-
-      </div>
-    `;
-
-    showToast("New conversation created");
-
-  }
-
-
-  function escapeHtml(text) {
-
-    const div = document.createElement("div");
-
-    div.textContent = text;
-
-    return div.innerHTML;
-
-  }
-
-
-  /* =====================================
-     VOICE
-  ===================================== */
-
-  let recognition = null;
-  let listening = false;
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-
-  if (SpeechRecognition) {
-
-    recognition = new SpeechRecognition();
-
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.lang = "en-US";
-
-
-    recognition.onstart = function() {
-
-      listening = true;
-
-      document.getElementById("voiceCircle")
-        .classList.add("listening");
-
-      document.getElementById("voiceStatus")
-        .textContent = "Listening...";
-
-      document.getElementById("voiceButton")
-        .textContent = "⏹";
-
-    };
-
-
-    recognition.onresult = function(event) {
-
-      let transcript = "";
-
-      for (
-        let i = event.resultIndex;
-        i < event.results.length;
-        i++
-      ) {
-
-        transcript += event.results[i][0].transcript;
-
-      }
-
-      document.getElementById("voiceTranscript")
-        .textContent = transcript;
-
-    };
-
-
-    recognition.onend = function() {
-
-      listening = false;
-
-      document.getElementById("voiceCircle")
-        .classList.remove("listening");
-
-      document.getElementById("voiceButton")
-        .textContent = "🎙";
-
-      document.getElementById("voiceStatus")
-        .textContent = "Voice AI Ready";
-
-      const transcript =
-        document.getElementById("voiceTranscript").textContent;
-
-      if (
-        transcript &&
-        transcript !== "Voice transcript will appear here..."
-      ) {
-
-        setTimeout(() => {
-
-          const response = generateAIResponse(transcript);
-
-          document.getElementById("voiceTranscript")
-            .textContent =
-              "You: " + transcript +
-              "\n\nAI: " + response;
-
-          speak(response);
-
-        }, 500);
-
-      }
-
-    };
-
-
-    recognition.onerror = function(event) {
-
-      listening = false;
-
-      document.getElementById("voiceCircle")
-        .classList.remove("listening");
-
-      document.getElementById("voiceButton")
-        .textContent = "🎙";
-
-      document.getElementById("voiceStatus")
-        .textContent = "Voice error";
-
-      showToast("Voice recognition error: " + event.error);
-
-    };
-
-  }
-
-
-  function toggleVoice() {
-
-    if (!recognition) {
-
-      showToast(
-        "Speech recognition is not supported in this browser."
-      );
-
-      return;
-
-    }
-
-    if (listening) {
-
-      recognition.stop();
-
-    } else {
-
-      document.getElementById("voiceTranscript")
-        .textContent = "Listening...";
-
-      recognition.start();
-
-    }
-
-  }
-
-
-  /* =====================================
-     TEXT TO SPEECH
-  ===================================== */
-
-  function speak(text) {
-
-    if (!("speechSynthesis" in window)) {
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-
-    const utterance =
-      new SpeechSynthesisUtterance(text);
-
-    utterance.rate = 1;
-    utterance.pitch = 1;
-
-    window.speechSynthesis.speak(utterance);
-
-  }
-
-
-  /* =====================================
-     OCR DEMO
-  ===================================== */
-
-  const fileInput =
-    document.getElementById("fileInput");
-
-  fileInput.addEventListener("change", function() {
-
-    if (!this.files.length) return;
-
-    processFile(this.files[0]);
-
-  });
-
-
-  function processFile(file) {
-
-    document.getElementById("ocrStatus")
-      .textContent = "PROCESSING";
-
-    document.getElementById("ocrDocument")
-      .textContent = file.name;
-
-    document.getElementById("ocrType")
-      .textContent = detectDocumentType(file.name);
-
-    document.getElementById("ocrText")
-      .textContent = "Analyzing document...";
-
-    document.getElementById("ocrAI")
-      .textContent = "AI document analysis running...";
-
-    setTimeout(() => {
-
-      document.getElementById("ocrStatus")
-        .textContent = "COMPLETED";
-
-      document.getElementById("ocrText")
-        .textContent =
-          "Demo extraction completed. Connect a real OCR engine such as Tesseract, a cloud OCR service, or a document AI API for actual text extraction.";
-
-      document.getElementById("ocrAI")
-        .textContent =
-          "Document understood successfully. Ready for workflow automation.";
-
-      showToast("Document processed");
-
-    }, 1500);
-
-  }
-
-
-  function detectDocumentType(filename) {
-
-    const name = filename.toLowerCase();
-
-    if (
-      name.includes("invoice") ||
-      name.includes("bill")
-    ) {
-      return "Invoice";
-    }
-
-    if (
-      name.includes("receipt")
-    ) {
-      return "Receipt";
-    }
-
-    if (
-      name.includes("contract") ||
-      name.includes("agreement")
-    ) {
-      return "Contract";
-    }
-
-    if (
-      name.includes("passport") ||
-      name.includes("identity") ||
-      name.includes("id")
-    ) {
-      return "Identity Document";
-    }
-
-    return "General Document";
-
-  }
-
-
-  /* =====================================
-     DRAG & DROP
-  ===================================== */
-
-  const uploadBox =
-    document.getElementById("uploadBox");
-
-  uploadBox.addEventListener("dragover", function(event) {
-
-    event.preventDefault();
-
-    uploadBox.classList.add("dragover");
-
-  });
-
-
-  uploadBox.addEventListener("dragleave", function() {
-
-    uploadBox.classList.remove("dragover");
-
-  });
-
-
-  uploadBox.addEventListener("drop", function(event) {
-
-    event.preventDefault();
-
-    uploadBox.classList.remove("dragover");
-
-    const files = event.dataTransfer.files;
-
-    if (files.length) {
-
-      processFile(files[0]);
-
-    }
-
-  });
-
-
-  /* =====================================
-     AUTOMATION TOGGLES
-  ===================================== */
-
-  function toggleAutomation(button) {
-
-    button.classList.toggle("on");
-
-    if (button.classList.contains("on")) {
-
-      showToast("Automation enabled");
-
-    } else {
-
-      showToast("Automation disabled");
-
-    }
-
-  }
-
-
-  /* =====================================
-     CONVERSATION SWITCHING
-  ===================================== */
-
-  document.querySelectorAll(".conversation")
-    .forEach(conversation => {
-
-      conversation.addEventListener("click", function() {
-
-        document.querySelectorAll(".conversation")
-          .forEach(item => item.classList.remove("active"));
-
-        this.classList.add("active");
-
-        showToast(
-          "Loaded: " + this.textContent.trim()
+        const slab = new THREE.Mesh(
+            new THREE.BoxGeometry(4.3,.12,4.3),
+            new THREE.MeshStandardMaterial({
+                color:0x2d3b45,
+                metalness:.5,
+                roughness:.4
+            })
         );
 
-      });
+        slab.position.y=y;
 
-    });
-
-
-  /* =====================================
-     KEYBOARD SHORTCUT
-  ===================================== */
-
-  document.addEventListener("keydown", function(event) {
-
-    if (
-      event.ctrlKey &&
-      event.key.toLowerCase() === "k"
-    ) {
-
-      event.preventDefault();
-
-      switchPage("chat");
-
-      document.getElementById("chatInput").focus();
+        buildingGroup.add(slab);
 
     }
 
-  });
+
+    /* SIDE WINGS */
+
+    const wingMaterial =
+        new THREE.MeshStandardMaterial({
+            color:0x425766,
+            metalness:.2,
+            roughness:.5
+        });
+
+
+    const leftWing = new THREE.Mesh(
+        new THREE.BoxGeometry(2,3,5),
+        wingMaterial
+    );
+
+    leftWing.position.set(-3,1.5,0);
+
+    buildingGroup.add(leftWing);
+
+
+    const rightWing = new THREE.Mesh(
+        new THREE.BoxGeometry(2,3,5),
+        wingMaterial
+    );
+
+    rightWing.position.set(3,1.5,0);
+
+    buildingGroup.add(rightWing);
+
+
+    /* ROOF */
+
+    const roof = new THREE.Mesh(
+        new THREE.BoxGeometry(5,0.3,5),
+        new THREE.MeshStandardMaterial({
+            color:0x1d2730,
+            metalness:.8
+        })
+    );
+
+    roof.position.y=9.15;
+
+    buildingGroup.add(roof);
+
+
+    /* GROUND */
+
+    const ground = new THREE.Mesh(
+        new THREE.BoxGeometry(15,.15,15),
+        new THREE.MeshStandardMaterial({
+            color:0x151d24,
+            roughness:.8
+        })
+    );
+
+    ground.position.y=-.15;
+
+    scene.add(ground);
+
+
+    /* GRID */
+
+    const grid = new THREE.GridHelper(
+        15,
+        15,
+        0x315066,
+        0x19262f
+    );
+
+    scene.add(grid);
+
+
+    /* ORBIT CONTROLS */
+
+    if(THREE.OrbitControls){
+
+        controls = new THREE.OrbitControls(
+            camera,
+            renderer.domElement
+        );
+
+        controls.enableDamping=true;
+        controls.dampingFactor=.06;
+        controls.minDistance=5;
+        controls.maxDistance=20;
+        controls.target.set(0,4,0);
+
+    }
+
+
+    window.addEventListener(
+        "resize",
+        resize3D
+    );
+
+
+    animate();
+
+}
+
+
+function animate(){
+
+    requestAnimationFrame(animate);
+
+    if(
+        autoRotate &&
+        buildingGroup
+    ){
+
+        buildingGroup.rotation.y += .003;
+
+    }
+
+    if(controls){
+        controls.update();
+    }
+
+    renderer.render(scene,camera);
+
+}
+
+
+function resize3D(){
+
+    if(!renderer) return;
+
+    camera.aspect =
+        container.clientWidth /
+        container.clientHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        container.clientWidth,
+        container.clientHeight
+    );
+
+}
+
+
+function resetCamera(){
+
+    camera.position.set(8,6,9);
+
+    if(controls){
+
+        controls.target.set(0,4,0);
+        controls.update();
+
+    }
+
+}
+
+
+function toggleAutoRotate(){
+
+    autoRotate=!autoRotate;
+
+}
+
+
+function toggleWireframe(){
+
+    wireframe=!wireframe;
+
+    buildingGroup.traverse(object=>{
+
+        if(object.isMesh){
+
+            object.material.wireframe=wireframe;
+
+        }
+
+    });
+
+}
+
+
+init3D();
+
+
+/* ============================================================
+   PROJECT FILTER
+============================================================ */
+
+function filterProjects(category,button){
+
+    document
+        .querySelectorAll(".filter")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+    button.classList.add("active");
+
+
+    document
+        .querySelectorAll(".project")
+        .forEach(project=>{
+
+            if(
+                category==="all" ||
+                project.dataset.category===category
+            ){
+
+                project.style.display="block";
+
+            }else{
+
+                project.style.display="none";
+
+            }
+
+        });
+
+}
+
+
+/* ============================================================
+   AI CONSTRUCTION SIMULATION
+============================================================ */
+
+let simulationRunning=false;
+let simulationTimer=null;
+
+const stages=[
+    "Site Preparation",
+    "Foundation",
+    "Structural Frame",
+    "Building Envelope",
+    "MEP Installation",
+    "Project Completion"
+];
+
+
+function updateConstruction(value){
+
+    value=Number(value);
+
+    const timeline=
+        document.getElementById("timeline");
+
+    timeline.value=value;
+
+
+    const day=Math.round(
+        (value/100)*365
+    );
+
+    document.getElementById(
+        "dayLabel"
+    ).textContent=`DAY ${day}`;
+
+
+    let stage;
+
+    if(value<15){
+        stage=stages[0];
+    }else if(value<30){
+        stage=stages[1];
+    }else if(value<60){
+        stage=stages[2];
+    }else if(value<78){
+        stage=stages[3];
+    }else if(value<92){
+        stage=stages[4];
+    }else{
+        stage=stages[5];
+    }
+
+
+    document.getElementById(
+        "stageLabel"
+    ).textContent=stage;
+
+
+    /* BUILD FLOORS */
+
+    const floors=
+        document.querySelectorAll(".floor");
+
+    let floorCount=
+        Math.floor((value/100)*6);
+
+    floors.forEach(
+        (floor,index)=>{
+
+            if(index<floorCount){
+
+                floor.style.transform=
+                    "scaleY(1)";
+
+            }else{
+
+                floor.style.transform=
+                    "scaleY(0)";
+
+            }
+
+        }
+    );
+
+
+    /* ANALYTICS */
+
+    document.getElementById(
+        "completionValue"
+    ).textContent=`${value}%`;
+
+    document.getElementById(
+        "completionBar"
+    ).style.width=`${value}%`;
+
+
+    /* ACTIVE PHASE */
+
+    const phaseIndex=
+        value<15 ? 0 :
+        value<30 ? 1 :
+        value<60 ? 2 :
+        value<78 ? 3 :
+        value<92 ? 4 : 5;
+
+
+    document
+        .querySelectorAll(".phase")
+        .forEach((phase,index)=>{
+
+            phase.classList.toggle(
+                "active",
+                index===phaseIndex
+            );
+
+        });
+
+}
+
+
+function toggleSimulation(){
+
+    if(simulationRunning){
+
+        stopSimulation();
+
+    }else{
+
+        startSimulation();
+
+    }
+
+}
+
+
+function startSimulation(){
+
+    simulationRunning=true;
+
+    document.getElementById(
+        "playButton"
+    ).textContent="❚❚ PAUSE SIMULATION";
+
+
+    simulationTimer=setInterval(()=>{
+
+        const timeline=
+            document.getElementById("timeline");
+
+        let value=
+            Number(timeline.value)+.5;
+
+
+        if(value>=100){
+
+            value=100;
+            stopSimulation();
+
+        }
+
+
+        updateConstruction(value);
+
+    },80);
+
+}
+
+
+function stopSimulation(){
+
+    simulationRunning=false;
+
+    clearInterval(simulationTimer);
+
+    document.getElementById(
+        "playButton"
+    ).textContent="▶ PLAY AI SIMULATION";
+
+}
+
+
+function resetSimulation(){
+
+    stopSimulation();
+
+    updateConstruction(0);
+
+}
+
+
+function selectPhase(value){
+
+    updateConstruction(value);
+
+}
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+function scrollToSection(id){
+
+    document
+        .getElementById(id)
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+
+}
 
 </script>
 
