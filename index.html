@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURELIA // Luxury Architectural & Engineering Intelligence</title>
+    <title>BIG // Bjarke Ingels Group - Inspired Architecture</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,158 +12,224 @@
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            400: '#FACC15',
-                            500: '#EAB308',
-                            650: '#CA8A04',
-                            glow: 'rgba(234, 179, 8, 0.35)'
-                        },
-                        obsidian: '#07090E',
-                        surface: '#111622',
+                        bigdark: '#0a0a0a',
+                        bigcard: '#141414',
+                        bigyellow: '#FFD600', // Iconic BIG yellow pop
                     }
                 }
             }
         }
     </script>
-    <!-- Three.js for Advanced 3D Rendering -->
+    <!-- Three.js for 3D Architectural Models -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Playfair Display & Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Space Grotesk & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #07090E; color: #F3F4F6; overflow-x: hidden; }
-        .font-serif { font-family: 'Playfair Display', serif; }
-        .glass-luxury { background: rgba(17, 22, 34, 0.65); backdrop-filter: blur(16px); border: 1px solid rgba(234, 179, 8, 0.15); }
-        .gold-glow { box-shadow: 0 0 25px rgba(234, 179, 8, 0.15); }
-        #canvas-container { width: 1000%; height: 550px; position: relative; border-radius: 1.25rem; overflow: hidden; border: 1px solid rgba(234, 179, 8, 0.2); background: radial-gradient(circle at center, #111622 0%, #07090E 100%); }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #07090E; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #EAB308; }
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #f5f5f5; overflow-x: hidden; }
+        .font-heading { font-family: 'Space Grotesk', sans-serif; }
+        .project-card:hover .project-overlay { opacity: 1; }
+        .project-card:hover img { transform: scale(1.03); }
+        #canvas-container { width: 100%; height: 500px; position: relative; background: #000; border-radius: 4px; overflow: hidden; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb:hover { background: #FFD600; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-black">
+<body class="selection:bg-bigyellow selection:text-black">
 
-    <!-- Luxury Header -->
-    <header class="glass-luxury sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b border-gold-500/10">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gold-400 to-amber-700 flex items-center justify-center text-obsidian font-bold text-lg shadow-lg shadow-gold-500/20">
-                <i class="fa-solid fa-gem"></i>
-            </div>
-            <div>
-                <span class="text-xl font-serif font-bold tracking-widest text-white">AURELIA</span>
-                <span class="block text-[10px] tracking-[0.25em] text-gold-400 uppercase font-medium">Engineering & Architecture</span>
-            </div>
+    <!-- BIG Style Minimalist Sticky Navigation -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/90 backdrop-blur-md px-6 lg:px-12 py-5 flex justify-between items-center border-b border-white/10">
+        <div class="flex items-center space-x-6">
+            <a href="#" class="font-heading font-bold text-2xl tracking-tighter text-white">BIG<span class="text-bigyellow">.</span></a>
+            <span class="hidden md:inline-block text-xs uppercase tracking-widest text-neutral-400 font-medium">Bjarke Ingels Group // Architecture & Engineering</span>
         </div>
-        <nav class="hidden md:flex space-x-8 text-xs tracking-widest uppercase font-medium text-gray-300">
-            <a href="#matrix" class="hover:text-gold-400 transition">Parametric 3D</a>
-            <a href="#ai-suite" class="hover:text-gold-400 transition">AI Simulation</a>
-            <a href="#portfolio" class="hover:text-gold-400 transition">Residences</a>
+        <nav class="hidden lg:flex space-x-8 text-xs tracking-widest uppercase font-semibold text-neutral-300">
+            <a href="#projects" class="hover:text-bigyellow transition">Projects</a>
+            <a href="#interactive-suite" class="hover:text-bigyellow transition">3D & AI Lab</a>
+            <a href="#about" class="hover:text-bigyellow transition">Info</a>
+            <a href="#contact" class="hover:text-bigyellow transition">Contact</a>
         </nav>
-        <button class="bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-obsidian px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition gold-glow">
-            Request Private Viewing
+        <button onclick="toggleMenu()" class="lg:hidden text-white focus:outline-none">
+            <i class="fa-solid fa-bars text-xl"></i>
         </button>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
-        
-        <!-- Left Column: Dynamic 3D Matrix Viewer (8 Cols) -->
-        <section id="matrix" class="lg:col-span-8 space-y-4">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                <div>
-                    <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">Live WebGL Matrix</span>
-                    <h2 class="text-3xl font-serif font-bold tracking-tight text-white mt-1">Parametric Tower Design</h2>
-                </div>
-                <!-- Dynamic View Controls -->
-                <div class="flex items-center space-x-2 bg-surface p-1.5 rounded-xl border border-gold-500/25">
-                    <button onclick="setDesignStyle('tower')" class="px-3 py-1.5 text-xs rounded-lg font-medium transition bg-gold-500 text-obsidian shadow" id="btn-tower">The Aurelia Tower</button>
-                    <button onclick="setDesignStyle('villa')" class="px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white" id="btn-villa">Skyline Villa</button>
-                    <button onclick="toggleWireframe()" class="px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white border-l border-gray-700 ml-1"><i class="fa-solid fa-network-wired mr-1"></i> Wireframe</button>
-                </div>
-            </div>
-            
-            <!-- 3D Canvas Box -->
-            <div id="canvas-container"></div>
-            
-            <div class="flex justify-between items-center text-xs text-gray-400 px-2">
-                <div class="space-x-4">
-                    <span><i class="fa-solid fa-arrows-spin text-gold-400 mr-1"></i> Drag to Rotate Matrix</span>
-                    <span><i class="fa-solid fa-magnifying-glass-plus text-gold-400 mr-1"></i> Scroll to Zoom</span>
-                </div>
-                <div class="text-gold-400 font-mono text-[11px]" id="render-fps">FPS: 60 // WebGL 2.0 Active</div>
-            </div>
-        </section>
+    <!-- Hero / Intro Statement -->
+    <section class="pt-32 pb-16 px-6 lg:px-12 max-w-7xl mx-auto">
+        <h1 class="font-heading text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none text-white max-w-4xl">
+            Formgiving <span class="text-neutral-600">is the art of turning</span> ideas <span class="text-neutral-600">into</span> reality.
+        </h1>
+        <p class="mt-6 text-neutral-400 text-sm md:text-base max-w-xl leading-relaxed">
+            Exploring the overlap between pragmatic architecture and utopian engineering. Discover our interactive 3D models and AI-driven structural construction sequences below.
+        </p>
+    </section>
 
-        <!-- Right Column: AI Construction Time-Lapse & Intelligence Suite (4 Cols) -->
-        <section id="ai-suite" class="lg:col-span-4 glass-luxury p-6 rounded-2xl flex flex-col justify-between space-y-6">
-            <div>
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center space-x-2 text-gold-400">
-                        <i class="fa-solid fa-brain-circuit"></i>
-                        <span class="text-[10px] font-bold tracking-[0.2em] uppercase">Generative AI Core</span>
+    <!-- Interactive 3D & AI Time-Lapse Suite (BIG Innovation Lab Style) -->
+    <section id="interactive-suite" class="px-6 lg:px-12 max-w-7xl mx-auto mb-24">
+        <div class="border-t border-b border-white/10 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left: 3D WebGL Viewer (7 Cols) -->
+            <div class="lg:col-span-7 space-y-4">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-bigyellow font-semibold">Live Parametric Matrix</span>
+                        <h3 class="font-heading text-2xl font-bold text-white mt-1">Copenhagen Mountain Loop</h3>
                     </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gold-500/10 text-gold-400 border border-gold-500/30 animate-pulse">
-                        Neural Synced
-                    </span>
+                    <!-- Model Switcher -->
+                    <div class="flex space-x-2 bg-neutral-900 p-1 rounded border border-white/10 text-xs">
+                        <button onclick="switchGeometry('mountain')" id="btn-mountain" class="px-3 py-1 bg-bigyellow text-black font-semibold rounded transition">Mountain</button>
+                        <button onclick="switchGeometry('spiral')" id="btn-spiral" class="px-3 py-1 text-neutral-400 hover:text-white transition">Spiral Tower</button>
+                    </div>
                 </div>
-                <h3 class="text-xl font-serif font-bold text-white">AI Construction Time-Lapse</h3>
-                <p class="text-xs text-gray-400 mt-1 leading-relaxed">Watch real-time synthetic projection mapping build out foundation stress analysis, structural steel frameworks, and glass enclosure seals.</p>
+
+                <!-- Three.js Canvas Container -->
+                <div id="canvas-container"></div>
+                <div class="flex justify-between text-xs text-neutral-500 px-1 font-mono">
+                    <span><i class="fa-solid fa-arrows-spin text-bigyellow mr-1"></i> Drag to Rotate 3D Space</span>
+                    <span>WebGL 2.0 // Real-time Shader</span>
+                </div>
             </div>
 
-            <!-- Dynamic Progress Tracker -->
-            <div class="bg-obsidian/70 p-4 rounded-xl border border-gold-500/20 space-y-3">
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-400">Simulation Phase:</span>
-                    <span id="phase-name" class="font-bold text-gold-400 tracking-wider">01 // Geotechnical Piling</span>
-                </div>
-                <div class="w-full bg-gray-900 h-1.5 rounded-full overflow-hidden border border-gray-800">
-                    <div id="ai-progress-bar" class="bg-gradient-to-r from-amber-600 to-gold-400 h-full w-1/3 transition-all duration-700"></div>
-                </div>
-                <p id="phase-details" class="text-[11px] text-gray-400 leading-relaxed">Deep-soil bedrock anchoring, high-density concrete sub-structure injection.</p>
-            </div>
-
-            <!-- Interactive Timeline Controls -->
-            <div class="space-y-3">
-                <div class="grid grid-cols-3 gap-2 text-center">
-                    <button onclick="setAiPhase(1)" id="phase-btn-1" class="py-2 bg-surface border border-gold-500/40 text-gold-400 text-xs rounded-lg font-medium transition">Phase I</button>
-                    <button onclick="setAiPhase(2)" id="phase-btn-2" class="py-2 bg-surface border border-gray-800 text-gray-400 text-xs rounded-lg font-medium hover:border-gray-600 transition">Phase II</button>
-                    <button onclick="setAiPhase(3)" id="phase-btn-3" class="py-2 bg-surface border border-gray-800 text-gray-400 text-xs rounded-lg font-medium hover:border-gray-600 transition">Phase III</button>
-                </div>
-                <button id="ai-play-btn" onclick="toggleAiTimelapse()" class="w-full py-3.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-obsidian rounded-xl font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-gold-500/20 flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-play"></i>
-                    <span>Run AI Time-Lapse Simulation</span>
-                </button>
-            </div>
-
-            <!-- Engineering Specs Footnote -->
-            <div class="pt-4 border-t border-gray-800/80 grid grid-cols-2 gap-4 text-center">
+            <!-- Right: AI Construction Time-Lapse Control Panel (5 Cols) -->
+            <div class="lg:col-span-5 bg-bigcard border border-white/10 p-6 rounded-lg space-y-6">
                 <div>
-                    <span class="block text-[10px] text-gray-500 uppercase">Seismic Rating</span>
-                    <span class="text-sm font-semibold text-white font-mono">Zone 5 (Max)</span>
+                    <div class="flex items-center space-x-2 text-bigyellow mb-1">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span class="text-[10px] uppercase font-bold tracking-widest">AI Generative Time-Lapse</span>
+                    </div>
+                    <h4 class="font-heading text-xl font-bold text-white">Structural Assembly Sequence</h4>
+                    <p class="text-xs text-neutral-400 mt-1">Simulate algorithmic construction phases optimized for carbon-neutral material loading.</p>
                 </div>
-                <div>
-                    <span class="block text-[10px] text-gray-500 uppercase">Carbon Offset</span>
-                    <span class="text-sm font-semibold text-gold-400 font-mono">-42% Neutral</span>
+
+                <!-- Progress Details Box -->
+                <div class="bg-black/60 p-4 rounded border border-white/10 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-neutral-400">Current Phase:</span>
+                        <span id="phase-title" class="font-bold text-bigyellow">01 // Geothermal Foundation</span>
+                    </div>
+                    <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                        <div id="ai-progress" class="bg-bigyellow h-full w-1/3 transition-all duration-500"></div>
+                    </div>
+                    <p id="phase-desc" class="text-xs text-neutral-400 leading-relaxed pt-1">Deep-piling foundation laying and sub-grade concrete matrix stabilization.</p>
+                </div>
+
+                <!-- Phase Selectors & Play Button -->
+                <div class="space-y-3">
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                        <button onclick="setAiPhase(1)" id="phase-btn-1" class="py-2 bg-neutral-900 border border-bigyellow text-bigyellow rounded font-semibold transition">1. Base</button>
+                        <button onclick="setAiPhase(2)" id="phase-btn-2" class="py-2 bg-neutral-900 border border-white/10 text-neutral-400 rounded hover:text-white transition">2. Core</button>
+                        <button onclick="setAiPhase(3)" id="phase-btn-3" class="py-2 bg-neutral-900 border border-white/10 text-neutral-400 rounded hover:text-white transition">3. Envelope</button>
+                    </div>
+                    <button id="play-timelapse-btn" onclick="toggleTimelapse()" class="w-full py-3 bg-bigyellow hover:bg-yellow-400 text-black font-heading font-bold text-xs uppercase tracking-wider rounded transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Play AI Time-Lapse</span>
+                    </button>
                 </div>
             </div>
-        </section>
 
-    </main>
+        </div>
+    </section>
 
-    <!-- Luxury Footer -->
-    <footer class="border-t border-gold-500/10 bg-obsidian py-6 px-8 text-center text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto w-full gap-4">
-        <p>&copy; 2026 AURELIA Architectural Intelligence. All Rights Reserved.</p>
-        <div class="flex space-x-6 text-gray-400">
-            <a href="#" class="hover:text-gold-400 transition"><i class="fa-brands fa-linkedin-in"></i></a>
-            <a href="#" class="hover:text-gold-400 transition"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" class="hover:text-gold-400 transition"><i class="fa-brands fa-behance"></i></a>
+    <!-- BIG Style Project Grid Portfolio -->
+    <section id="projects" class="px-6 lg:px-12 max-w-7xl mx-auto mb-32">
+        <div class="flex justify-between items-end mb-8 border-b border-white/10 pb-4">
+            <h2 class="font-heading text-2xl font-bold tracking-tight text-white">Selected Works</h2>
+            <div class="flex space-x-4 text-xs uppercase tracking-wider text-neutral-400 font-medium">
+                <span class="text-bigyellow cursor-pointer">All</span>
+                <span class="hover:text-white cursor-pointer transition">Architecture</span>
+                <span class="hover:text-white cursor-pointer transition">Engineering</span>
+                <span class="hover:text-white cursor-pointer transition">Masterplan</span>
+            </div>
+        </div>
+
+        <!-- Portfolio Grid (BIG Editorial Style Images & Overlays) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Project 1 -->
+            <div class="project-card relative group cursor-pointer overflow-hidden bg-bigcard border border-white/10 rounded-lg">
+                <div class="h-80 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80" alt="Project" class="w-full h-full object-cover transition duration-700">
+                    <div class="project-overlay absolute inset-0 bg-black/70 opacity-0 transition duration-300 flex flex-col justify-end p-6">
+                        <span class="text-bigyellow text-xs font-mono uppercase">Copenhagen, Denmark</span>
+                        <h4 class="font-heading text-xl font-bold text-white mt-1">Amager Resource Center</h4>
+                        <p class="text-xs text-neutral-300 mt-2">Waste-to-energy plant with an urban ski slope on its roof.</p>
+                    </div>
+                </div>
+                <div class="p-4 flex justify-between items-center bg-bigcard">
+                    <span class="font-heading font-semibold text-sm text-white">ARC / CopenHill</span>
+                    <span class="text-xs text-neutral-500 font-mono">2019</span>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card relative group cursor-pointer overflow-hidden bg-bigcard border border-white/10 rounded-lg">
+                <div class="h-80 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" alt="Project" class="w-full h-full object-cover transition duration-700">
+                    <div class="project-overlay absolute inset-0 bg-black/70 opacity-0 transition duration-300 flex flex-col justify-end p-6">
+                        <span class="text-bigyellow text-xs font-mono uppercase">New York, USA</span>
+                        <h4 class="font-heading text-xl font-bold text-white mt-1">The Spiral Tower</h4>
+                        <p class="text-xs text-neutral-300 mt-2">Cascading terraced ribbon of green workspaces ascending Manhattan.</p>
+                    </div>
+                </div>
+                <div class="p-4 flex justify-between items-center bg-bigcard">
+                    <span class="font-heading font-semibold text-sm text-white">The Spiral</span>
+                    <span class="text-xs text-neutral-500 font-mono">2022</span>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card relative group cursor-pointer overflow-hidden bg-bigcard border border-white/10 rounded-lg">
+                <div class="h-80 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Project" class="w-full h-full object-cover transition duration-700">
+                    <div class="project-overlay absolute inset-0 bg-black/70 opacity-0 transition duration-300 flex flex-col justify-end p-6">
+                        <span class="text-bigyellow text-xs font-mono uppercase">Tel Aviv, Israel</span>
+                        <h4 class="font-heading text-xl font-bold text-white mt-1">Pollinating City</h4>
+                        <p class="text-xs text-neutral-300 mt-2">Sustainable coastal masterplan maximizing public solar integration.</p>
+                    </div>
+                </div>
+                <div class="p-4 flex justify-between items-center bg-bigcard">
+                    <span class="font-heading font-semibold text-sm text-white">Tel Aviv Galleria</span>
+                    <span class="text-xs text-neutral-500 font-mono">2025</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BIG Footer -->
+    <footer id="contact" class="border-t border-white/10 bg-black py-12 px-6 lg:px-12 text-xs text-neutral-400">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <span class="font-heading font-bold text-lg text-white">BIG<span class="text-bigyellow">.</span></span>
+                <p class="mt-3 text-neutral-500 leading-relaxed">Bjarke Ingels Group is a Copenhagen, New York, London, Barcelona, and Shenzhen based group of architects, designers, and builders.</p>
+            </div>
+            <div>
+                <h5 class="uppercase font-semibold tracking-wider text-white mb-3">Offices</h5>
+                <p class="space-y-1">Copenhagen // DK<br>New York // US<br>London // UK<br>Shenzhen // CN</p>
+            </div>
+            <div>
+                <h5 class="uppercase font-semibold tracking-wider text-white mb-3">Inquiries</h5>
+                <p>press@big.dk<br>careers@big.dk<br>business@big.dk</p>
+            </div>
+            <div>
+                <h5 class="uppercase font-semibold tracking-wider text-white mb-3">Connect</h5>
+                <div class="flex space-x-4 text-white text-base">
+                    <a href="#" class="hover:text-bigyellow transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-bigyellow transition"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="hover:text-bigyellow transition"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-12 pt-6 border-t border-white/5 flex justify-between text-[11px] text-neutral-600">
+            <p>&copy; 2026 Bjarke Ingels Group. All Rights Reserved.</p>
+            <p>Privacy Policy // Terms of Use</p>
         </div>
     </footer>
 
-    <!-- Three.js & Animation Code -->
+    <!-- Three.js Interactive 3D & AI Animation Logic -->
     <script>
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -174,104 +240,84 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
 
-        // Advanced Luxury Lighting Setup
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        // Minimalist Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xFFD600, 1.2);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
 
-        const goldLight = new THREE.PointLight(0xFACC15, 2, 50);
-        goldLight.position.set(10, 15, 10);
-        scene.add(goldLight);
+        let modelGroup = new THREE.Group();
+        scene.add(modelGroup);
 
-        const blueAccentLight = new THREE.PointLight(0x3b82f6, 1.5, 50);
-        blueAccentLight.position.set(-10, 5, -10);
-        scene.add(blueAccentLight);
-
-        let architecturalGroup = new THREE.Group();
-        scene.add(architecturalGroup);
-
-        camera.position.set(14, 12, 16);
+        camera.position.set(12, 10, 15);
         camera.lookAt(0, 0, 0);
 
-        let currentModelType = 'tower';
-        let isWireframeActive = false;
+        let currentGeometryType = 'mountain';
 
-        // Procedural Luxury Generators
-        function generateModel(style, phase = 3) {
-            architecturalGroup.clear();
+        // Procedural Geometry Generator (BIG Style Forms)
+        function buildModel(type, phase = 3) {
+            modelGroup.clear();
 
-            if (style === 'tower') {
-                // Phase 1: Foundation
+            if (type === 'mountain') {
+                // Tiered Mountain / Sloped Architecture (CopenHill style)
                 if (phase >= 1) {
-                    const baseGeo = new THREE.BoxGeometry(6, 0.6, 6);
-                    const baseMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, wireframe: isWireframeActive, roughness: 0.5 });
-                    const baseMesh = new THREE.Mesh(baseGeo, baseMat);
-                    baseMesh.position.y = -0.3;
-                    architecturalGroup.add(baseMesh);
+                    const baseGeo = new THREE.BoxGeometry(7, 0.4, 5);
+                    const baseMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+                    const base = new THREE.Mesh(baseGeo, baseMat);
+                    base.position.y = -0.2;
+                    modelGroup.add(base);
                 }
-
-                // Phase 2: Structural Steel Skeleton
                 if (phase >= 2) {
-                    const levels = 10;
-                    for (let i = 0; i < levels; i++) {
-                        const floorGeo = new THREE.BoxGeometry(4.2, 0.4, 4.2);
-                        const floorMat = new THREE.MeshStandardMaterial({ color: 0xCA8A04, wireframe: isWireframeActive, metalness: 0.8, roughness: 0.2 });
-                        const floorMesh = new THREE.Mesh(floorGeo, floorMat);
-                        floorMesh.position.y = i * 1.1 + 0.4;
-                        architecturalGroup.add(floorMesh);
+                    for(let i = 0; i < 5; i++) {
+                        const tierGeo = new THREE.BoxGeometry(6 - i*0.8, 0.7, 4.5);
+                        const tierMat = new THREE.MeshStandardMaterial({ color: i % 2 === 0 ? 0xcccccc : 0x555555, roughness: 0.3 });
+                        const tier = new THREE.Mesh(tierGeo, tierMat);
+                        tier.position.set(i * 0.4, i * 0.7 + 0.3, 0);
+                        modelGroup.add(tier);
                     }
                 }
-
-                // Phase 3: Luxury Glass Envelope & Golden Spire
                 if (phase >= 3) {
-                    const glassGeo = new THREE.CylinderGeometry(1.6, 2.1, 11, 6);
-                    const glassMat = new THREE.MeshPhysicalMaterial({ 
-                        color: 0x60a5fa, 
-                        transmission: 0.85, 
-                        opacity: 1, 
-                        transparent: true, 
-                        roughness: 0.1, 
-                        wireframe: isWireframeActive,
-                        ior: 1.5 
-                    });
-                    const glassMesh = new THREE.Mesh(glassGeo, glassMat);
-                    glassMesh.position.y = 5.5;
-                    architecturalGroup.add(glassMesh);
-
-                    // Golden Crown Apex
-                    const spireGeo = new THREE.ConeGeometry(0.4, 3, 4);
-                    const spireMat = new THREE.MeshStandardMaterial({ color: 0xFACC15, metalness: 0.9, roughness: 0.1, wireframe: isWireframeActive });
-                    const spireMesh = new THREE.Mesh(spireGeo, spireMat);
-                    spireMesh.position.y = 12.5;
-                    architecturalGroup.add(spireMesh);
+                    const roofGeo = new THREE.BufferGeometry();
+                    // Sloped ski roof surface simulation
+                    const topMesh = new THREE.Mesh(
+                        new THREE.BoxGeometry(2, 0.2, 4.2),
+                        new THREE.MeshStandardMaterial({ color: 0xFFD600, metalness: 0.5 })
+                    );
+                    topMesh.position.set(1.6, 3.8, 0);
+                    modelGroup.add(topMesh);
                 }
-            } else if (style === 'villa') {
-                // Modern Cantilever Villa
+            } else if (type === 'spiral') {
+                // Twisting Spiral Tower
                 if (phase >= 1) {
-                    const padGeo = new THREE.BoxGeometry(7, 0.5, 5);
-                    const padMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, wireframe: isWireframeActive });
-                    const pad = new THREE.Mesh(padGeo, padMat);
+                    const pad = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 5), new THREE.MeshStandardMaterial({ color: 0x222222 }));
                     pad.position.y = -0.25;
-                    architecturalGroup.add(pad);
+                    modelGroup.add(pad);
                 }
                 if (phase >= 2) {
-                    const level1Geo = new THREE.BoxGeometry(6, 1.5, 4);
-                    const level1Mat = new THREE.MeshStandardMaterial({ color: 0x374151, wireframe: isWireframeActive });
-                    const level1 = new THREE.Mesh(level1Geo, level1Mat);
-                    level1.position.y = 1;
-                    architecturalGroup.add(level1);
+                    const levels = 8;
+                    for(let i = 0; i < levels; i++) {
+                        const floor = new THREE.Mesh(
+                            new THREE.BoxGeometry(3.5, 0.5, 3.5),
+                            new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.2 })
+                        );
+                        floor.position.y = i * 0.8 + 0.4;
+                        floor.rotation.y = i * 0.25; // Twisting effect
+                        modelGroup.add(floor);
+                    }
                 }
                 if (phase >= 3) {
-                    const cantileverGeo = new THREE.BoxGeometry(8, 1.5, 4.2);
-                    const cantileverMat = new THREE.MeshPhysicalMaterial({ color: 0xFACC15, metalness: 0.4, roughness: 0.2, wireframe: isWireframeActive });
-                    const cantilever = new THREE.Mesh(cantileverGeo, cantileverMat);
-                    cantilever.position.set(0.5, 2.8, 0);
-                    architecturalGroup.add(cantilever);
+                    const crown = new THREE.Mesh(
+                        new THREE.ConeGeometry(0.8, 2.5, 4),
+                        new THREE.MeshStandardMaterial({ color: 0xFFD600, metalness: 0.8 })
+                    );
+                    crown.position.y = 7.5;
+                    modelGroup.add(crown);
                 }
             }
         }
 
-        // Initial Generation
-        generateModel('tower', 3);
+        buildModel('mountain', 3);
 
         // Mouse Drag Rotation
         let isDragging = false;
@@ -283,90 +329,79 @@
             if (!isDragging) return;
             const dx = e.clientX - prevMouse.x;
             const dy = e.clientY - prevMouse.y;
-            architecturalGroup.rotation.y += dx * 0.007;
-            architecturalGroup.rotation.x += dy * 0.007;
+            modelGroup.rotation.y += dx * 0.008;
+            modelGroup.rotation.x += dy * 0.008;
             prevMouse = { x: e.clientX, y: e.clientY };
         });
 
-        // Render Loop
+        // Animation Loop
         function animate() {
             requestAnimationFrame(animate);
             if (!isDragging) {
-                architecturalGroup.rotation.y += 0.0025; // Gentle majestic rotation
+                modelGroup.rotation.y += 0.003;
             }
             renderer.render(scene, camera);
         }
         animate();
 
-        // Style Switchers
-        function setDesignStyle(style) {
-            currentModelType = style;
-            document.getElementById('btn-tower').className = style === 'tower' ? "px-3 py-1.5 text-xs rounded-lg font-medium transition bg-gold-500 text-obsidian shadow" : "px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white";
-            document.getElementById('btn-villa').className = style === 'villa' ? "px-3 py-1.5 text-xs rounded-lg font-medium transition bg-gold-500 text-obsidian shadow" : "px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white";
-            generateModel(style, currentAiStep);
-        }
-
-        function toggleWireframe() {
-            isWireframeActive = !isWireframeActive;
-            generateModel(currentModelType, currentAiStep);
+        // Switch Geometry Type
+        function switchGeometry(type) {
+            currentGeometryType = type;
+            document.getElementById('btn-mountain').className = type === 'mountain' ? "px-3 py-1 bg-bigyellow text-black font-semibold rounded transition" : "px-3 py-1 text-neutral-400 hover:text-white transition";
+            document.getElementById('btn-spiral').className = type === 'spiral' ? "px-3 py-1 bg-bigyellow text-black font-semibold rounded transition" : "px-3 py-1 text-neutral-400 hover:text-white transition";
+            buildModel(type, currentAiStep);
         }
 
         // AI Construction Time-Lapse Logic
         let currentAiStep = 3;
-        const aiPhases = [
-            { name: "01 // Geotechnical Piling", width: "33%", details: "Deep-soil bedrock anchoring, high-density concrete sub-structure injection." },
-            { name: "02 // Structural Steel Skeleton", width: "66%", details: "Erection of high-tensile carbon composite core framing columns." },
-            { name: "03 // Facade & Golden Envelope", width: "100%", details: "Curtain wall sealing, thermal glass integration, and custom crown spires." }
+        const aiPhasesData = [
+            { title: "01 // Geothermal Foundation", width: "33%", desc: "Deep-piling foundation laying and sub-grade concrete matrix stabilization." },
+            { title: "02 // Structural Core & Framing", width: "66%", desc: "Erection of high-tensile composite skeletal frame and modular floor plates." },
+            { title: "03 // Facade & Programmatic Roof", width: "100%", desc: "Curtain wall insulation, solar panel integration, and public surface finish." }
         ];
 
         function setAiPhase(stepIndex) {
             currentAiStep = stepIndex;
-            const phase = aiPhases[stepIndex - 1];
-            document.getElementById('phase-name').innerText = phase.name;
-            document.getElementById('ai-progress-bar').style.width = phase.width;
-            document.getElementById('phase-details').innerText = phase.details;
+            const phase = aiPhasesData[stepIndex - 1];
+            document.getElementById('phase-title').innerText = phase.title;
+            document.getElementById('ai-progress').style.width = phase.width;
+            document.getElementById('phase-desc').innerText = phase.desc;
 
-            // Update UI buttons
             for(let i = 1; i <= 3; i++) {
                 const btn = document.getElementById(`phase-btn-${i}`);
                 if (i === stepIndex) {
-                    btn.className = "py-2 bg-surface border border-gold-500/40 text-gold-400 text-xs rounded-lg font-medium transition";
+                    btn.className = "py-2 bg-neutral-900 border border-bigyellow text-bigyellow rounded font-semibold transition";
                 } else {
-                    btn.className = "py-2 bg-surface border border-gray-800 text-gray-400 text-xs rounded-lg font-medium hover:border-gray-600 transition";
+                    btn.className = "py-2 bg-neutral-900 border border-white/10 text-neutral-400 rounded hover:text-white transition";
                 }
             }
-
-            generateModel(currentModelType, stepIndex);
+            buildModel(currentGeometryType, stepIndex);
         }
 
-        let isAiPlaying = false;
-        let aiTimer = null;
+        let isPlaying = false;
+        let timer = null;
 
-        function toggleAiTimelapse() {
-            const playBtn = document.getElementById('ai-play-btn');
-            if (!isAiPlaying) {
-                isAiPlaying = true;
-                playBtn.innerHTML = `<i class="fa-solid fa-pause"></i><span>Pause AI Simulation</span>`;
+        function toggleTimelapse() {
+            const btn = document.getElementById('play-timelapse-btn');
+            if (!isPlaying) {
+                isPlaying = true;
+                btn.innerHTML = `<i class="fa-solid fa-pause"></i><span>Pause Time-Lapse</span>`;
                 currentAiStep = 1;
                 setAiPhase(currentAiStep);
 
-                aiTimer = setInterval(() => {
+                timer = setInterval(() => {
                     currentAiStep++;
                     if (currentAiStep > 3) currentAiStep = 1;
                     setAiPhase(currentAiStep);
-                }, 2800);
+                }, 2500);
             } else {
-                stopAiTimelapse();
+                isPlaying = false;
+                clearInterval(timer);
+                btn.innerHTML = `<i class="fa-solid fa-play"></i><span>Play AI Time-Lapse</span>`;
             }
         }
 
-        function stopAiTimelapse() {
-            isAiPlaying = false;
-            clearInterval(aiTimer);
-            document.getElementById('ai-play-btn').innerHTML = `<i class="fa-solid fa-play"></i><span>Run AI Time-Lapse Simulation</span>`;
-        }
-
-        // Window Resize
+        // Responsive Resizing
         window.addEventListener('resize', () => {
             camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
