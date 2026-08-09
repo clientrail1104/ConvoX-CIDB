@@ -1,2016 +1,377 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>ARCHI3D — Architecture & Engineering Intelligence</title>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
-
-<style>
-:root{
-    --bg:#080b10;
-    --panel:#10151d;
-    --panel2:#151c26;
-    --line:#26303d;
-    --text:#f4f7fb;
-    --muted:#8995a5;
-    --blue:#4da3ff;
-    --cyan:#27e0d0;
-    --orange:#ff9d42;
-    --green:#4fe18a;
-    --danger:#ff5f6d;
-}
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    font-family:Inter,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    overflow-x:hidden;
-}
-
-button,
-input{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-/* NAVIGATION */
-
-.navbar{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 36px;
-    background:rgba(8,11,16,.84);
-    backdrop-filter:blur(20px);
-    border-bottom:1px solid rgba(255,255,255,.07);
-    z-index:1000;
-}
-
-.logo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:20px;
-    font-weight:800;
-    letter-spacing:1px;
-}
-
-.logo-mark{
-    width:36px;
-    height:36px;
-    display:grid;
-    place-items:center;
-    color:#081019;
-    background:linear-gradient(135deg,var(--cyan),var(--blue));
-    clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
-    font-weight:900;
-}
-
-.nav-links{
-    display:flex;
-    gap:30px;
-}
-
-.nav-links a{
-    color:var(--muted);
-    text-decoration:none;
-    font-size:14px;
-}
-
-.nav-links a:hover{
-    color:white;
-}
-
-.nav-button{
-    border:1px solid var(--line);
-    background:var(--panel);
-    color:white;
-    padding:10px 17px;
-    border-radius:8px;
-}
-
-/* HERO */
-
-.hero{
-    min-height:100vh;
-    padding:140px 7% 80px;
-    display:grid;
-    grid-template-columns:1fr 1.15fr;
-    align-items:center;
-    gap:50px;
-    background:
-        radial-gradient(circle at 80% 40%,rgba(77,163,255,.13),transparent 35%),
-        radial-gradient(circle at 10% 80%,rgba(39,224,208,.07),transparent 30%);
-}
-
-.eyebrow{
-    color:var(--cyan);
-    font-size:12px;
-    font-weight:700;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    margin-bottom:20px;
-}
-
-.hero h1{
-    font-size:clamp(48px,6vw,88px);
-    line-height:.95;
-    letter-spacing:-5px;
-    margin-bottom:30px;
-}
-
-.hero h1 span{
-    color:transparent;
-    -webkit-text-stroke:1px var(--blue);
-}
-
-.hero p{
-    max-width:580px;
-    color:var(--muted);
-    font-size:18px;
-    line-height:1.7;
-}
-
-.hero-buttons{
-    display:flex;
-    gap:14px;
-    margin-top:35px;
-}
-
-.primary{
-    border:0;
-    background:linear-gradient(135deg,var(--blue),#7467ff);
-    color:white;
-    padding:15px 24px;
-    border-radius:8px;
-    font-weight:700;
-}
-
-.secondary{
-    border:1px solid var(--line);
-    background:var(--panel);
-    color:white;
-    padding:15px 24px;
-    border-radius:8px;
-}
-
-/* 3D VIEWER */
-
-.viewer{
-    height:590px;
-    position:relative;
-    background:
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
-        #0b1017;
-    background-size:40px 40px;
-    border:1px solid var(--line);
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 30px 100px rgba(0,0,0,.45);
-}
-
-#three-container{
-    width:100%;
-    height:100%;
-}
-
-.viewer-label{
-    position:absolute;
-    top:18px;
-    left:18px;
-    padding:8px 12px;
-    border:1px solid rgba(255,255,255,.1);
-    background:rgba(8,11,16,.75);
-    backdrop-filter:blur(10px);
-    border-radius:7px;
-    font-size:11px;
-    color:var(--cyan);
-    z-index:5;
-}
-
-.viewer-tools{
-    position:absolute;
-    bottom:18px;
-    right:18px;
-    display:flex;
-    gap:7px;
-    z-index:5;
-}
-
-.viewer-tools button{
-    width:40px;
-    height:40px;
-    background:rgba(8,11,16,.8);
-    color:white;
-    border:1px solid var(--line);
-    border-radius:7px;
-}
-
-/* STATS */
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-}
-
-.stat{
-    padding:28px 35px;
-    border-right:1px solid var(--line);
-}
-
-.stat:last-child{
-    border:0;
-}
-
-.stat strong{
-    display:block;
-    font-size:30px;
-    margin-bottom:5px;
-}
-
-.stat span{
-    color:var(--muted);
-    font-size:12px;
-}
-
-/* SECTIONS */
-
-section.content{
-    padding:110px 7%;
-}
-
-.section-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:end;
-    margin-bottom:45px;
-}
-
-.section-head h2{
-    font-size:42px;
-    letter-spacing:-2px;
-}
-
-.section-head p{
-    max-width:480px;
-    color:var(--muted);
-    line-height:1.6;
-}
-
-/* DISCIPLINES */
-
-.disciplines{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:14px;
-}
-
-.discipline{
-    min-height:210px;
-    padding:24px;
-    border:1px solid var(--line);
-    background:linear-gradient(145deg,var(--panel),#0c1118);
-    border-radius:12px;
-    transition:.25s;
-}
-
-.discipline:hover{
-    transform:translateY(-7px);
-    border-color:#3c526c;
-}
-
-.discipline-icon{
-    font-size:30px;
-    margin-bottom:35px;
-}
-
-.discipline h3{
-    margin-bottom:10px;
-}
-
-.discipline p{
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.6;
-}
-
-/* PROJECTS */
-
-.project-controls{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.filter{
-    border:1px solid var(--line);
-    background:var(--panel);
-    color:var(--muted);
-    padding:9px 15px;
-    border-radius:7px;
-}
-
-.filter.active{
-    background:var(--blue);
-    color:white;
-    border-color:var(--blue);
-}
-
-.projects{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:18px;
-}
-
-.project{
-    border:1px solid var(--line);
-    background:var(--panel);
-    border-radius:12px;
-    overflow:hidden;
-}
-
-.project-image{
-    height:220px;
-    position:relative;
-    display:flex;
-    align-items:end;
-    padding:18px;
-    background-size:cover;
-    background-position:center;
-}
-
-.project-image.one{
-    background:
-        linear-gradient(transparent,#080b10),
-        linear-gradient(135deg,#244b61,#0d1921);
-}
-
-.project-image.two{
-    background:
-        linear-gradient(transparent,#080b10),
-        linear-gradient(135deg,#49371e,#111);
-}
-
-.project-image.three{
-    background:
-        linear-gradient(transparent,#080b10),
-        linear-gradient(135deg,#253e31,#0d1510);
-}
-
-.project-tag{
-    padding:6px 9px;
-    border-radius:5px;
-    background:rgba(0,0,0,.6);
-    font-size:10px;
-    color:var(--cyan);
-}
-
-.project-info{
-    padding:20px;
-}
-
-.project-info h3{
-    margin-bottom:8px;
-}
-
-.project-info p{
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.5;
-}
-
-.project-meta{
-    display:flex;
-    justify-content:space-between;
-    margin-top:18px;
-    padding-top:15px;
-    border-top:1px solid var(--line);
-    font-size:11px;
-    color:var(--muted);
-}
-
-/* AI TIMELAPSE */
-
-.ai-section{
-    background:
-        radial-gradient(circle at 80% 30%,rgba(77,163,255,.1),transparent 30%),
-        #0a0f16;
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-}
-
-.timeline-layout{
-    display:grid;
-    grid-template-columns:1.5fr .7fr;
-    gap:22px;
-}
-
-.timeline-box{
-    border:1px solid var(--line);
-    background:var(--panel);
-    border-radius:14px;
-    padding:25px;
-}
-
-.construction-stage{
-    height:390px;
-    position:relative;
-    overflow:hidden;
-    border-radius:10px;
-    background:
-        linear-gradient(#18222b,#0c1218 65%);
-}
-
-.ground{
-    position:absolute;
-    bottom:0;
-    left:0;
-    right:0;
-    height:80px;
-    background:#202b30;
-}
-
-/* CSS construction animation */
-
-.building{
-    position:absolute;
-    left:50%;
-    bottom:80px;
-    transform:translateX(-50%);
-    width:270px;
-    height:270px;
-}
-
-.floor{
-    position:absolute;
-    left:0;
-    width:100%;
-    height:45px;
-    background:linear-gradient(90deg,#394c59,#8ca1ad,#344852);
-    border:1px solid #91a8b5;
-    transform:scaleY(0);
-    transform-origin:bottom;
-    transition:.5s;
-}
-
-.floor:nth-child(1){bottom:0}
-.floor:nth-child(2){bottom:45px}
-.floor:nth-child(3){bottom:90px}
-.floor:nth-child(4){bottom:135px}
-.floor:nth-child(5){bottom:180px}
-.floor:nth-child(6){bottom:225px}
-
-.windows{
-    position:absolute;
-    inset:8px;
-    display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:7px;
-}
-
-.window{
-    background:#5ad9ff;
-    box-shadow:0 0 10px rgba(90,217,255,.5);
-}
-
-.crane{
-    position:absolute;
-    left:18%;
-    bottom:80px;
-    width:4px;
-    height:260px;
-    background:#f0a23b;
-}
-
-.crane-arm{
-    position:absolute;
-    top:0;
-    left:0;
-    width:220px;
-    height:4px;
-    background:#f0a23b;
-}
-
-.hook{
-    position:absolute;
-    top:0;
-    left:175px;
-    width:2px;
-    height:100px;
-    background:#f0a23b;
-}
-
-.crane-hook{
-    position:absolute;
-    top:95px;
-    left:168px;
-    width:16px;
-    height:12px;
-    border-bottom:3px solid #f0a23b;
-    border-left:3px solid transparent;
-    border-right:3px solid transparent;
-}
-
-.time-info{
-    position:absolute;
-    top:18px;
-    left:18px;
-    padding:10px 13px;
-    border-radius:7px;
-    background:rgba(0,0,0,.65);
-    font-size:12px;
-    z-index:5;
-}
-
-.timeline{
-    margin-top:20px;
-}
-
-input[type=range]{
-    width:100%;
-    accent-color:var(--cyan);
-}
-
-.timeline-labels{
-    display:flex;
-    justify-content:space-between;
-    margin-top:8px;
-    color:var(--muted);
-    font-size:10px;
-}
-
-.play-row{
-    display:flex;
-    gap:10px;
-    margin-top:18px;
-}
-
-.play{
-    padding:11px 20px;
-    border:0;
-    border-radius:7px;
-    background:var(--cyan);
-    color:#061313;
-    font-weight:800;
-}
-
-.reset{
-    padding:11px 20px;
-    border:1px solid var(--line);
-    border-radius:7px;
-    background:transparent;
-    color:white;
-}
-
-/* PHASES */
-
-.phase-list{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.phase{
-    padding:17px;
-    border:1px solid var(--line);
-    background:#0c1118;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-.phase.active{
-    border-color:var(--cyan);
-    background:rgba(39,224,208,.06);
-}
-
-.phase-number{
-    font-size:10px;
-    color:var(--cyan);
-}
-
-.phase strong{
-    display:block;
-    margin-top:4px;
-}
-
-/* ENGINEERING */
-
-.engineering{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-}
-
-.engineering-card{
-    padding:28px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:12px;
-}
-
-.engineering-card h3{
-    margin-bottom:15px;
-}
-
-.engineering-card p{
-    color:var(--muted);
-    font-size:14px;
-    line-height:1.7;
-}
-
-.metric{
-    margin-top:22px;
-}
-
-.metric-top{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:7px;
-    font-size:12px;
-}
-
-.metric-bar{
-    height:5px;
-    background:#202a35;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.metric-fill{
-    height:100%;
-    background:linear-gradient(90deg,var(--blue),var(--cyan));
-}
-
-/* CTA */
-
-.cta{
-    margin:50px 7% 100px;
-    padding:70px;
-    text-align:center;
-    border:1px solid var(--line);
-    border-radius:18px;
-    background:
-        radial-gradient(circle at center,rgba(77,163,255,.12),transparent 55%),
-        var(--panel);
-}
-
-.cta h2{
-    font-size:48px;
-    letter-spacing:-2px;
-    margin-bottom:18px;
-}
-
-.cta p{
-    color:var(--muted);
-    max-width:600px;
-    margin:auto;
-    line-height:1.6;
-}
-
-footer{
-    padding:30px 7%;
-    border-top:1px solid var(--line);
-    display:flex;
-    justify-content:space-between;
-    color:var(--muted);
-    font-size:12px;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1000px){
-    .hero{
-        grid-template-columns:1fr;
-    }
-
-    .disciplines{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .projects{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .timeline-layout{
-        grid-template-columns:1fr;
-    }
-
-    .stats{
-        grid-template-columns:1fr 1fr;
-    }
-}
-
-@media(max-width:650px){
-    .navbar{
-        padding:0 18px;
-    }
-
-    .nav-links{
-        display:none;
-    }
-
-    .hero{
-        padding:120px 20px 50px;
-    }
-
-    .hero h1{
-        letter-spacing:-3px;
-    }
-
-    .viewer{
-        height:420px;
-    }
-
-    section.content{
-        padding:70px 20px;
-    }
-
-    .disciplines,
-    .projects,
-    .engineering{
-        grid-template-columns:1fr;
-    }
-
-    .stats{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .stat{
-        padding:20px;
-    }
-
-    .cta{
-        margin:30px 20px 70px;
-        padding:45px 20px;
-    }
-
-    .cta h2{
-        font-size:35px;
-    }
-
-    footer{
-        padding:25px 20px;
-        flex-direction:column;
-        gap:10px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURELIA // Luxury Architectural & Engineering Intelligence</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#FACC15',
+                            500: '#EAB308',
+                            650: '#CA8A04',
+                            glow: 'rgba(234, 179, 8, 0.35)'
+                        },
+                        obsidian: '#07090E',
+                        surface: '#111622',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Three.js for Advanced 3D Rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Playfair Display & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #07090E; color: #F3F4F6; overflow-x: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .glass-luxury { background: rgba(17, 22, 34, 0.65); backdrop-filter: blur(16px); border: 1px solid rgba(234, 179, 8, 0.15); }
+        .gold-glow { box-shadow: 0 0 25px rgba(234, 179, 8, 0.15); }
+        #canvas-container { width: 1000%; height: 550px; position: relative; border-radius: 1.25rem; overflow: hidden; border: 1px solid rgba(234, 179, 8, 0.2); background: radial-gradient(circle at center, #111622 0%, #07090E 100%); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #07090E; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #EAB308; }
+    </style>
 </head>
-
-<body>
-
-<!-- NAVIGATION -->
-
-<nav class="navbar">
-
-    <div class="logo">
-        <div class="logo-mark">A</div>
-        ARCHI3D
-    </div>
-
-    <div class="nav-links">
-        <a href="#projects">Projects</a>
-        <a href="#disciplines">Engineering</a>
-        <a href="#ai">AI Time-Lapse</a>
-        <a href="#analysis">Analysis</a>
-    </div>
-
-    <button class="nav-button" onclick="scrollToSection('ai')">
-        Launch Simulation
-    </button>
-
-</nav>
-
-
-<!-- HERO -->
-
-<header class="hero">
-
-    <div>
-
-        <div class="eyebrow">
-            Architecture × Engineering × AI
-        </div>
-
-        <h1>
-            BUILD THE
-            <span>FUTURE</span>
-        </h1>
-
-        <p>
-            Explore architecture and engineering projects through
-            interactive 3D models, structural intelligence and
-            AI-powered construction time-lapse simulations.
-        </p>
-
-        <div class="hero-buttons">
-
-            <button class="primary"
-                    onclick="scrollToSection('projects')">
-                Explore Projects
-            </button>
-
-            <button class="secondary"
-                    onclick="scrollToSection('ai')">
-                View AI Construction
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div class="viewer">
-
-        <div class="viewer-label">
-            LIVE 3D BIM VIEWER · ROTATE / ZOOM
-        </div>
-
-        <div id="three-container"></div>
-
-        <div class="viewer-tools">
-
-            <button onclick="resetCamera()">⌂</button>
-            <button onclick="toggleWireframe()">◇</button>
-            <button onclick="toggleAutoRotate()">↻</button>
-
-        </div>
-
-    </div>
-
-</header>
-
-
-<!-- STATS -->
-
-<div class="stats">
-
-    <div class="stat">
-        <strong>3D</strong>
-        <span>Interactive Models</span>
-    </div>
-
-    <div class="stat">
-        <strong>AI</strong>
-        <span>Construction Simulation</span>
-    </div>
-
-    <div class="stat">
-        <strong>BIM</strong>
-        <span>Digital Building Data</span>
-    </div>
-
-    <div class="stat">
-        <strong>24/7</strong>
-        <span>Project Intelligence</span>
-    </div>
-
-</div>
-
-
-<!-- DISCIPLINES -->
-
-<section class="content" id="disciplines">
-
-    <div class="section-head">
-
-        <div>
-            <div class="eyebrow">MULTIDISCIPLINARY</div>
-            <h2>Engineering Universe</h2>
-        </div>
-
-        <p>
-            Bring architectural design, structural engineering,
-            MEP systems and construction intelligence into one
-            visual environment.
-        </p>
-
-    </div>
-
-
-    <div class="disciplines">
-
-        <div class="discipline">
-            <div class="discipline-icon">🏛️</div>
-            <h3>Architecture</h3>
-            <p>
-                Building form, façade systems, spatial planning,
-                materials and architectural visualization.
-            </p>
-        </div>
-
-        <div class="discipline">
-            <div class="discipline-icon">🏗️</div>
-            <h3>Structural</h3>
-            <p>
-                Columns, beams, slabs, foundations, structural
-                loads and building stability.
-            </p>
-        </div>
-
-        <div class="discipline">
-            <div class="discipline-icon">⚡</div>
-            <h3>Electrical</h3>
-            <p>
-                Power distribution, lighting, equipment and
-                building electrical systems.
-            </p>
-        </div>
-
-        <div class="discipline">
-            <div class="discipline-icon">💧</div>
-            <h3>MEP</h3>
-            <p>
-                HVAC, plumbing, fire protection and mechanical
-                building services.
-            </p>
-        </div>
-
-        <div class="discipline">
-            <div class="discipline-icon">🌐</div>
-            <h3>Civil</h3>
-            <p>
-                Roads, terrain, drainage, infrastructure and
-                site development.
-            </p>
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- PROJECTS -->
-
-<section class="content" id="projects">
-
-    <div class="section-head">
-
-        <div>
-            <div class="eyebrow">DIGITAL TWIN LIBRARY</div>
-            <h2>Featured Projects</h2>
-        </div>
-
-        <div class="project-controls">
-
-            <button class="filter active"
-                    onclick="filterProjects('all',this)">
-                All
-            </button>
-
-            <button class="filter"
-                    onclick="filterProjects('tower',this)">
-                Towers
-            </button>
-
-            <button class="filter"
-                    onclick="filterProjects('residential',this)">
-                Residential
-            </button>
-
-            <button class="filter"
-                    onclick="filterProjects('infrastructure',this)">
-                Infrastructure
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div class="projects">
-
-        <article class="project" data-category="tower">
-
-            <div class="project-image one">
-                <span class="project-tag">COMMERCIAL TOWER</span>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-black">
+
+    <!-- Luxury Header -->
+    <header class="glass-luxury sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b border-gold-500/10">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gold-400 to-amber-700 flex items-center justify-center text-obsidian font-bold text-lg shadow-lg shadow-gold-500/20">
+                <i class="fa-solid fa-gem"></i>
             </div>
+            <div>
+                <span class="text-xl font-serif font-bold tracking-widest text-white">AURELIA</span>
+                <span class="block text-[10px] tracking-[0.25em] text-gold-400 uppercase font-medium">Engineering & Architecture</span>
+            </div>
+        </div>
+        <nav class="hidden md:flex space-x-8 text-xs tracking-widest uppercase font-medium text-gray-300">
+            <a href="#matrix" class="hover:text-gold-400 transition">Parametric 3D</a>
+            <a href="#ai-suite" class="hover:text-gold-400 transition">AI Simulation</a>
+            <a href="#portfolio" class="hover:text-gold-400 transition">Residences</a>
+        </nav>
+        <button class="bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-obsidian px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition gold-glow">
+            Request Private Viewing
+        </button>
+    </header>
 
-            <div class="project-info">
-
-                <h3>Vertical Nexus</h3>
-
-                <p>
-                    48-storey mixed-use tower with integrated
-                    structural and MEP systems.
-                </p>
-
-                <div class="project-meta">
-                    <span>48 FLOORS</span>
-                    <span>186 m</span>
-                    <span>BIM READY</span>
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+        
+        <!-- Left Column: Dynamic 3D Matrix Viewer (8 Cols) -->
+        <section id="matrix" class="lg:col-span-8 space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">Live WebGL Matrix</span>
+                    <h2 class="text-3xl font-serif font-bold tracking-tight text-white mt-1">Parametric Tower Design</h2>
                 </div>
-
-            </div>
-
-        </article>
-
-
-        <article class="project" data-category="residential">
-
-            <div class="project-image two">
-                <span class="project-tag">RESIDENTIAL</span>
-            </div>
-
-            <div class="project-info">
-
-                <h3>Skyline Residences</h3>
-
-                <p>
-                    High-density residential development with
-                    modular construction systems.
-                </p>
-
-                <div class="project-meta">
-                    <span>32 FLOORS</span>
-                    <span>420 UNITS</span>
-                    <span>SMART HOME</span>
+                <!-- Dynamic View Controls -->
+                <div class="flex items-center space-x-2 bg-surface p-1.5 rounded-xl border border-gold-500/25">
+                    <button onclick="setDesignStyle('tower')" class="px-3 py-1.5 text-xs rounded-lg font-medium transition bg-gold-500 text-obsidian shadow" id="btn-tower">The Aurelia Tower</button>
+                    <button onclick="setDesignStyle('villa')" class="px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white" id="btn-villa">Skyline Villa</button>
+                    <button onclick="toggleWireframe()" class="px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white border-l border-gray-700 ml-1"><i class="fa-solid fa-network-wired mr-1"></i> Wireframe</button>
                 </div>
-
             </div>
-
-        </article>
-
-
-        <article class="project" data-category="infrastructure">
-
-            <div class="project-image three">
-                <span class="project-tag">INFRASTRUCTURE</span>
+            
+            <!-- 3D Canvas Box -->
+            <div id="canvas-container"></div>
+            
+            <div class="flex justify-between items-center text-xs text-gray-400 px-2">
+                <div class="space-x-4">
+                    <span><i class="fa-solid fa-arrows-spin text-gold-400 mr-1"></i> Drag to Rotate Matrix</span>
+                    <span><i class="fa-solid fa-magnifying-glass-plus text-gold-400 mr-1"></i> Scroll to Zoom</span>
+                </div>
+                <div class="text-gold-400 font-mono text-[11px]" id="render-fps">FPS: 60 // WebGL 2.0 Active</div>
             </div>
+        </section>
 
-            <div class="project-info">
-
-                <h3>Green Transit Hub</h3>
-
-                <p>
-                    Multimodal transportation hub integrating
-                    architecture and civil infrastructure.
-                </p>
-
-                <div class="project-meta">
-                    <span>85,000 m²</span>
-                    <span>TRANSIT</span>
-                    <span>GREEN</span>
-                </div>
-
-            </div>
-
-        </article>
-
-    </div>
-
-</section>
-
-
-<!-- AI TIMELAPSE -->
-
-<section class="content ai-section" id="ai">
-
-    <div class="section-head">
-
-        <div>
-            <div class="eyebrow">GENERATIVE CONSTRUCTION</div>
-            <h2>AI Construction Time-Lapse</h2>
-        </div>
-
-        <p>
-            Simulate the complete construction lifecycle from
-            site preparation to final building completion.
-        </p>
-
-    </div>
-
-
-    <div class="timeline-layout">
-
-        <div class="timeline-box">
-
-            <div class="construction-stage">
-
-                <div class="time-info">
-                    <span id="dayLabel">DAY 0</span>
-                    ·
-                    <span id="stageLabel">Site Preparation</span>
-                </div>
-
-                <div class="crane">
-                    <div class="crane-arm"></div>
-                    <div class="hook"></div>
-                    <div class="crane-hook"></div>
-                </div>
-
-                <div class="building">
-
-                    <div class="floor">
-                        <div class="windows">
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                        </div>
+        <!-- Right Column: AI Construction Time-Lapse & Intelligence Suite (4 Cols) -->
+        <section id="ai-suite" class="lg:col-span-4 glass-luxury p-6 rounded-2xl flex flex-col justify-between space-y-6">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2 text-gold-400">
+                        <i class="fa-solid fa-brain-circuit"></i>
+                        <span class="text-[10px] font-bold tracking-[0.2em] uppercase">Generative AI Core</span>
                     </div>
-
-                    <div class="floor">
-                        <div class="windows">
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                        </div>
-                    </div>
-
-                    <div class="floor">
-                        <div class="windows">
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                        </div>
-                    </div>
-
-                    <div class="floor">
-                        <div class="windows">
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                        </div>
-                    </div>
-
-                    <div class="floor">
-                        <div class="windows">
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                        </div>
-                    </div>
-
-                    <div class="floor">
-                        <div class="windows">
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                            <span class="window"></span>
-                        </div>
-                    </div>
-
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gold-500/10 text-gold-400 border border-gold-500/30 animate-pulse">
+                        Neural Synced
+                    </span>
                 </div>
-
-                <div class="ground"></div>
-
+                <h3 class="text-xl font-serif font-bold text-white">AI Construction Time-Lapse</h3>
+                <p class="text-xs text-gray-400 mt-1 leading-relaxed">Watch real-time synthetic projection mapping build out foundation stress analysis, structural steel frameworks, and glass enclosure seals.</p>
             </div>
 
-
-            <div class="timeline">
-
-                <input
-                    type="range"
-                    id="timeline"
-                    min="0"
-                    max="100"
-                    value="0"
-                    oninput="updateConstruction(this.value)"
-                >
-
-                <div class="timeline-labels">
-                    <span>DAY 0</span>
-                    <span>DAY 90</span>
-                    <span>DAY 180</span>
-                    <span>DAY 270</span>
-                    <span>DAY 365</span>
+            <!-- Dynamic Progress Tracker -->
+            <div class="bg-obsidian/70 p-4 rounded-xl border border-gold-500/20 space-y-3">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Simulation Phase:</span>
+                    <span id="phase-name" class="font-bold text-gold-400 tracking-wider">01 // Geotechnical Piling</span>
                 </div>
-
+                <div class="w-full bg-gray-900 h-1.5 rounded-full overflow-hidden border border-gray-800">
+                    <div id="ai-progress-bar" class="bg-gradient-to-r from-amber-600 to-gold-400 h-full w-1/3 transition-all duration-700"></div>
+                </div>
+                <p id="phase-details" class="text-[11px] text-gray-400 leading-relaxed">Deep-soil bedrock anchoring, high-density concrete sub-structure injection.</p>
             </div>
 
-
-            <div class="play-row">
-
-                <button class="play"
-                        id="playButton"
-                        onclick="toggleSimulation()">
-                    ▶ PLAY AI SIMULATION
+            <!-- Interactive Timeline Controls -->
+            <div class="space-y-3">
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <button onclick="setAiPhase(1)" id="phase-btn-1" class="py-2 bg-surface border border-gold-500/40 text-gold-400 text-xs rounded-lg font-medium transition">Phase I</button>
+                    <button onclick="setAiPhase(2)" id="phase-btn-2" class="py-2 bg-surface border border-gray-800 text-gray-400 text-xs rounded-lg font-medium hover:border-gray-600 transition">Phase II</button>
+                    <button onclick="setAiPhase(3)" id="phase-btn-3" class="py-2 bg-surface border border-gray-800 text-gray-400 text-xs rounded-lg font-medium hover:border-gray-600 transition">Phase III</button>
+                </div>
+                <button id="ai-play-btn" onclick="toggleAiTimelapse()" class="w-full py-3.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-obsidian rounded-xl font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-gold-500/20 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Run AI Time-Lapse Simulation</span>
                 </button>
-
-                <button class="reset"
-                        onclick="resetSimulation()">
-                    RESET
-                </button>
-
             </div>
 
+            <!-- Engineering Specs Footnote -->
+            <div class="pt-4 border-t border-gray-800/80 grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <span class="block text-[10px] text-gray-500 uppercase">Seismic Rating</span>
+                    <span class="text-sm font-semibold text-white font-mono">Zone 5 (Max)</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] text-gray-500 uppercase">Carbon Offset</span>
+                    <span class="text-sm font-semibold text-gold-400 font-mono">-42% Neutral</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Luxury Footer -->
+    <footer class="border-t border-gold-500/10 bg-obsidian py-6 px-8 text-center text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto w-full gap-4">
+        <p>&copy; 2026 AURELIA Architectural Intelligence. All Rights Reserved.</p>
+        <div class="flex space-x-6 text-gray-400">
+            <a href="#" class="hover:text-gold-400 transition"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" class="hover:text-gold-400 transition"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="hover:text-gold-400 transition"><i class="fa-brands fa-behance"></i></a>
         </div>
-
-
-        <div class="timeline-box">
-
-            <div class="eyebrow">CONSTRUCTION PHASES</div>
-
-            <div class="phase-list">
-
-                <div class="phase active"
-                     onclick="selectPhase(0)">
-                    <div class="phase-number">01 · DAY 0–45</div>
-                    <strong>Site Preparation</strong>
-                </div>
-
-                <div class="phase"
-                     onclick="selectPhase(20)">
-                    <div class="phase-number">02 · DAY 45–90</div>
-                    <strong>Foundation</strong>
-                </div>
-
-                <div class="phase"
-                     onclick="selectPhase(40)">
-                    <div class="phase-number">03 · DAY 90–180</div>
-                    <strong>Structural Frame</strong>
-                </div>
-
-                <div class="phase"
-                     onclick="selectPhase(65)">
-                    <div class="phase-number">04 · DAY 180–270</div>
-                    <strong>Building Envelope</strong>
-                </div>
-
-                <div class="phase"
-                     onclick="selectPhase(82)">
-                    <div class="phase-number">05 · DAY 270–330</div>
-                    <strong>MEP Installation</strong>
-                </div>
-
-                <div class="phase"
-                     onclick="selectPhase(100)">
-                    <div class="phase-number">06 · DAY 330–365</div>
-                    <strong>Completion</strong>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ENGINEERING ANALYSIS -->
-
-<section class="content" id="analysis">
-
-    <div class="section-head">
-
-        <div>
-            <div class="eyebrow">LIVE BUILDING INTELLIGENCE</div>
-            <h2>Engineering Analysis</h2>
-        </div>
-
-        <p>
-            A visual overview of key project performance indicators.
-        </p>
-
-    </div>
-
-
-    <div class="engineering">
-
-        <div class="engineering-card">
-
-            <h3>Structural Performance</h3>
-
-            <p>
-                AI-assisted analysis of structural systems,
-                building loads and overall frame performance.
-            </p>
-
-            <div class="metric">
-
-                <div class="metric-top">
-                    <span>Structural Stability</span>
-                    <strong>94%</strong>
-                </div>
-
-                <div class="metric-bar">
-                    <div class="metric-fill" style="width:94%"></div>
-                </div>
-
-            </div>
-
-
-            <div class="metric">
-
-                <div class="metric-top">
-                    <span>Material Efficiency</span>
-                    <strong>87%</strong>
-                </div>
-
-                <div class="metric-bar">
-                    <div class="metric-fill" style="width:87%"></div>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="engineering-card">
-
-            <h3>Construction Progress</h3>
-
-            <p>
-                Digital project monitoring based on simulated
-                construction sequencing.
-            </p>
-
-            <div class="metric">
-
-                <div class="metric-top">
-                    <span>Overall Completion</span>
-                    <strong id="completionValue">0%</strong>
-                </div>
-
-                <div class="metric-bar">
-                    <div
-                        class="metric-fill"
-                        id="completionBar"
-                        style="width:0%">
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div class="metric">
-
-                <div class="metric-top">
-                    <span>Schedule Confidence</span>
-                    <strong>91%</strong>
-                </div>
-
-                <div class="metric-bar">
-                    <div class="metric-fill" style="width:91%"></div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- CTA -->
-
-<div class="cta">
-
-    <div class="eyebrow">NEXT GENERATION AEC PLATFORM</div>
-
-    <h2>Design. Simulate. Build.</h2>
-
-    <p>
-        Turn architecture and engineering data into immersive
-        digital experiences with 3D visualization and intelligent
-        construction simulation.
-    </p>
-
-    <br>
-
-    <button class="primary"
-            onclick="scrollToSection('projects')">
-        Explore Digital Buildings
-    </button>
-
-</div>
-
-
-<footer>
-
-    <span>© 2026 ARCHI3D</span>
-
-    <span>
-        Architecture · Engineering · BIM · AI Construction
-    </span>
-
-</footer>
-
-
-<script>
-
-/* ============================================================
-   THREE.JS 3D BUILDING
-============================================================ */
-
-let scene;
-let camera;
-let renderer;
-let controls;
-let buildingGroup;
-let wireframe = false;
-let autoRotate = true;
-
-const container = document.getElementById("three-container");
-
-function init3D(){
-
-    scene = new THREE.Scene();
-
-    scene.background = new THREE.Color(0x0b1017);
-
-
-    camera = new THREE.PerspectiveCamera(
-        45,
-        container.clientWidth / container.clientHeight,
-        0.1,
-        1000
-    );
-
-    camera.position.set(8,6,9);
-
-
-    renderer = new THREE.WebGLRenderer({
-        antialias:true,
-        alpha:true
-    });
-
-    renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio,2)
-    );
-
-    renderer.setSize(
-        container.clientWidth,
-        container.clientHeight
-    );
-
-    container.appendChild(renderer.domElement);
-
-
-    /* LIGHTING */
-
-    const ambient = new THREE.AmbientLight(
-        0xffffff,
-        1.7
-    );
-
-    scene.add(ambient);
-
-
-    const blueLight = new THREE.PointLight(
-        0x4da3ff,
-        80,
-        30
-    );
-
-    blueLight.position.set(5,8,5);
-
-    scene.add(blueLight);
-
-
-    const cyanLight = new THREE.PointLight(
-        0x27e0d0,
-        50,
-        25
-    );
-
-    cyanLight.position.set(-6,4,-3);
-
-    scene.add(cyanLight);
-
-
-    /* BUILDING */
-
-    buildingGroup = new THREE.Group();
-
-    scene.add(buildingGroup);
-
-
-    const material = new THREE.MeshStandardMaterial({
-        color:0x6d8798,
-        metalness:.25,
-        roughness:.45
-    });
-
-
-    const glass = new THREE.MeshStandardMaterial({
-        color:0x159cc4,
-        transparent:true,
-        opacity:.55,
-        metalness:.7,
-        roughness:.15
-    });
-
-
-    /* MAIN TOWER */
-
-    const tower = new THREE.Mesh(
-        new THREE.BoxGeometry(4,9,4),
-        material
-    );
-
-    tower.position.y=4.5;
-
-    buildingGroup.add(tower);
-
-
-    /* GLASS CORE */
-
-    const core = new THREE.Mesh(
-        new THREE.BoxGeometry(2.5,9.2,2.5),
-        glass
-    );
-
-    core.position.y=4.6;
-
-    buildingGroup.add(core);
-
-
-    /* FLOORS */
-
-    for(let y=1;y<9;y++){
-
-        const slab = new THREE.Mesh(
-            new THREE.BoxGeometry(4.3,.12,4.3),
-            new THREE.MeshStandardMaterial({
-                color:0x2d3b45,
-                metalness:.5,
-                roughness:.4
-            })
-        );
-
-        slab.position.y=y;
-
-        buildingGroup.add(slab);
-
-    }
-
-
-    /* SIDE WINGS */
-
-    const wingMaterial =
-        new THREE.MeshStandardMaterial({
-            color:0x425766,
-            metalness:.2,
-            roughness:.5
-        });
-
-
-    const leftWing = new THREE.Mesh(
-        new THREE.BoxGeometry(2,3,5),
-        wingMaterial
-    );
-
-    leftWing.position.set(-3,1.5,0);
-
-    buildingGroup.add(leftWing);
-
-
-    const rightWing = new THREE.Mesh(
-        new THREE.BoxGeometry(2,3,5),
-        wingMaterial
-    );
-
-    rightWing.position.set(3,1.5,0);
-
-    buildingGroup.add(rightWing);
-
-
-    /* ROOF */
-
-    const roof = new THREE.Mesh(
-        new THREE.BoxGeometry(5,0.3,5),
-        new THREE.MeshStandardMaterial({
-            color:0x1d2730,
-            metalness:.8
-        })
-    );
-
-    roof.position.y=9.15;
-
-    buildingGroup.add(roof);
-
-
-    /* GROUND */
-
-    const ground = new THREE.Mesh(
-        new THREE.BoxGeometry(15,.15,15),
-        new THREE.MeshStandardMaterial({
-            color:0x151d24,
-            roughness:.8
-        })
-    );
-
-    ground.position.y=-.15;
-
-    scene.add(ground);
-
-
-    /* GRID */
-
-    const grid = new THREE.GridHelper(
-        15,
-        15,
-        0x315066,
-        0x19262f
-    );
-
-    scene.add(grid);
-
-
-    /* ORBIT CONTROLS */
-
-    if(THREE.OrbitControls){
-
-        controls = new THREE.OrbitControls(
-            camera,
-            renderer.domElement
-        );
-
-        controls.enableDamping=true;
-        controls.dampingFactor=.06;
-        controls.minDistance=5;
-        controls.maxDistance=20;
-        controls.target.set(0,4,0);
-
-    }
-
-
-    window.addEventListener(
-        "resize",
-        resize3D
-    );
-
-
-    animate();
-
-}
-
-
-function animate(){
-
-    requestAnimationFrame(animate);
-
-    if(
-        autoRotate &&
-        buildingGroup
-    ){
-
-        buildingGroup.rotation.y += .003;
-
-    }
-
-    if(controls){
-        controls.update();
-    }
-
-    renderer.render(scene,camera);
-
-}
-
-
-function resize3D(){
-
-    if(!renderer) return;
-
-    camera.aspect =
-        container.clientWidth /
-        container.clientHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-        container.clientWidth,
-        container.clientHeight
-    );
-
-}
-
-
-function resetCamera(){
-
-    camera.position.set(8,6,9);
-
-    if(controls){
-
-        controls.target.set(0,4,0);
-        controls.update();
-
-    }
-
-}
-
-
-function toggleAutoRotate(){
-
-    autoRotate=!autoRotate;
-
-}
-
-
-function toggleWireframe(){
-
-    wireframe=!wireframe;
-
-    buildingGroup.traverse(object=>{
-
-        if(object.isMesh){
-
-            object.material.wireframe=wireframe;
-
+    </footer>
+
+    <!-- Three.js & Animation Code -->
+    <script>
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Advanced Luxury Lighting Setup
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const goldLight = new THREE.PointLight(0xFACC15, 2, 50);
+        goldLight.position.set(10, 15, 10);
+        scene.add(goldLight);
+
+        const blueAccentLight = new THREE.PointLight(0x3b82f6, 1.5, 50);
+        blueAccentLight.position.set(-10, 5, -10);
+        scene.add(blueAccentLight);
+
+        let architecturalGroup = new THREE.Group();
+        scene.add(architecturalGroup);
+
+        camera.position.set(14, 12, 16);
+        camera.lookAt(0, 0, 0);
+
+        let currentModelType = 'tower';
+        let isWireframeActive = false;
+
+        // Procedural Luxury Generators
+        function generateModel(style, phase = 3) {
+            architecturalGroup.clear();
+
+            if (style === 'tower') {
+                // Phase 1: Foundation
+                if (phase >= 1) {
+                    const baseGeo = new THREE.BoxGeometry(6, 0.6, 6);
+                    const baseMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, wireframe: isWireframeActive, roughness: 0.5 });
+                    const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+                    baseMesh.position.y = -0.3;
+                    architecturalGroup.add(baseMesh);
+                }
+
+                // Phase 2: Structural Steel Skeleton
+                if (phase >= 2) {
+                    const levels = 10;
+                    for (let i = 0; i < levels; i++) {
+                        const floorGeo = new THREE.BoxGeometry(4.2, 0.4, 4.2);
+                        const floorMat = new THREE.MeshStandardMaterial({ color: 0xCA8A04, wireframe: isWireframeActive, metalness: 0.8, roughness: 0.2 });
+                        const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+                        floorMesh.position.y = i * 1.1 + 0.4;
+                        architecturalGroup.add(floorMesh);
+                    }
+                }
+
+                // Phase 3: Luxury Glass Envelope & Golden Spire
+                if (phase >= 3) {
+                    const glassGeo = new THREE.CylinderGeometry(1.6, 2.1, 11, 6);
+                    const glassMat = new THREE.MeshPhysicalMaterial({ 
+                        color: 0x60a5fa, 
+                        transmission: 0.85, 
+                        opacity: 1, 
+                        transparent: true, 
+                        roughness: 0.1, 
+                        wireframe: isWireframeActive,
+                        ior: 1.5 
+                    });
+                    const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+                    glassMesh.position.y = 5.5;
+                    architecturalGroup.add(glassMesh);
+
+                    // Golden Crown Apex
+                    const spireGeo = new THREE.ConeGeometry(0.4, 3, 4);
+                    const spireMat = new THREE.MeshStandardMaterial({ color: 0xFACC15, metalness: 0.9, roughness: 0.1, wireframe: isWireframeActive });
+                    const spireMesh = new THREE.Mesh(spireGeo, spireMat);
+                    spireMesh.position.y = 12.5;
+                    architecturalGroup.add(spireMesh);
+                }
+            } else if (style === 'villa') {
+                // Modern Cantilever Villa
+                if (phase >= 1) {
+                    const padGeo = new THREE.BoxGeometry(7, 0.5, 5);
+                    const padMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, wireframe: isWireframeActive });
+                    const pad = new THREE.Mesh(padGeo, padMat);
+                    pad.position.y = -0.25;
+                    architecturalGroup.add(pad);
+                }
+                if (phase >= 2) {
+                    const level1Geo = new THREE.BoxGeometry(6, 1.5, 4);
+                    const level1Mat = new THREE.MeshStandardMaterial({ color: 0x374151, wireframe: isWireframeActive });
+                    const level1 = new THREE.Mesh(level1Geo, level1Mat);
+                    level1.position.y = 1;
+                    architecturalGroup.add(level1);
+                }
+                if (phase >= 3) {
+                    const cantileverGeo = new THREE.BoxGeometry(8, 1.5, 4.2);
+                    const cantileverMat = new THREE.MeshPhysicalMaterial({ color: 0xFACC15, metalness: 0.4, roughness: 0.2, wireframe: isWireframeActive });
+                    const cantilever = new THREE.Mesh(cantileverGeo, cantileverMat);
+                    cantilever.position.set(0.5, 2.8, 0);
+                    architecturalGroup.add(cantilever);
+                }
+            }
         }
 
-    });
+        // Initial Generation
+        generateModel('tower', 3);
 
-}
+        // Mouse Drag Rotation
+        let isDragging = false;
+        let prevMouse = { x: 0, y: 0 };
 
-
-init3D();
-
-
-/* ============================================================
-   PROJECT FILTER
-============================================================ */
-
-function filterProjects(category,button){
-
-    document
-        .querySelectorAll(".filter")
-        .forEach(btn=>{
-            btn.classList.remove("active");
+        container.addEventListener('mousedown', (e) => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - prevMouse.x;
+            const dy = e.clientY - prevMouse.y;
+            architecturalGroup.rotation.y += dx * 0.007;
+            architecturalGroup.rotation.x += dy * 0.007;
+            prevMouse = { x: e.clientX, y: e.clientY };
         });
 
-    button.classList.add("active");
+        // Render Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!isDragging) {
+                architecturalGroup.rotation.y += 0.0025; // Gentle majestic rotation
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
 
+        // Style Switchers
+        function setDesignStyle(style) {
+            currentModelType = style;
+            document.getElementById('btn-tower').className = style === 'tower' ? "px-3 py-1.5 text-xs rounded-lg font-medium transition bg-gold-500 text-obsidian shadow" : "px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white";
+            document.getElementById('btn-villa').className = style === 'villa' ? "px-3 py-1.5 text-xs rounded-lg font-medium transition bg-gold-500 text-obsidian shadow" : "px-3 py-1.5 text-xs rounded-lg font-medium transition text-gray-400 hover:text-white";
+            generateModel(style, currentAiStep);
+        }
 
-    document
-        .querySelectorAll(".project")
-        .forEach(project=>{
+        function toggleWireframe() {
+            isWireframeActive = !isWireframeActive;
+            generateModel(currentModelType, currentAiStep);
+        }
 
-            if(
-                category==="all" ||
-                project.dataset.category===category
-            ){
+        // AI Construction Time-Lapse Logic
+        let currentAiStep = 3;
+        const aiPhases = [
+            { name: "01 // Geotechnical Piling", width: "33%", details: "Deep-soil bedrock anchoring, high-density concrete sub-structure injection." },
+            { name: "02 // Structural Steel Skeleton", width: "66%", details: "Erection of high-tensile carbon composite core framing columns." },
+            { name: "03 // Facade & Golden Envelope", width: "100%", details: "Curtain wall sealing, thermal glass integration, and custom crown spires." }
+        ];
 
-                project.style.display="block";
+        function setAiPhase(stepIndex) {
+            currentAiStep = stepIndex;
+            const phase = aiPhases[stepIndex - 1];
+            document.getElementById('phase-name').innerText = phase.name;
+            document.getElementById('ai-progress-bar').style.width = phase.width;
+            document.getElementById('phase-details').innerText = phase.details;
 
-            }else{
-
-                project.style.display="none";
-
+            // Update UI buttons
+            for(let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`phase-btn-${i}`);
+                if (i === stepIndex) {
+                    btn.className = "py-2 bg-surface border border-gold-500/40 text-gold-400 text-xs rounded-lg font-medium transition";
+                } else {
+                    btn.className = "py-2 bg-surface border border-gray-800 text-gray-400 text-xs rounded-lg font-medium hover:border-gray-600 transition";
+                }
             }
 
-        });
+            generateModel(currentModelType, stepIndex);
+        }
 
-}
+        let isAiPlaying = false;
+        let aiTimer = null;
 
+        function toggleAiTimelapse() {
+            const playBtn = document.getElementById('ai-play-btn');
+            if (!isAiPlaying) {
+                isAiPlaying = true;
+                playBtn.innerHTML = `<i class="fa-solid fa-pause"></i><span>Pause AI Simulation</span>`;
+                currentAiStep = 1;
+                setAiPhase(currentAiStep);
 
-/* ============================================================
-   AI CONSTRUCTION SIMULATION
-============================================================ */
-
-let simulationRunning=false;
-let simulationTimer=null;
-
-const stages=[
-    "Site Preparation",
-    "Foundation",
-    "Structural Frame",
-    "Building Envelope",
-    "MEP Installation",
-    "Project Completion"
-];
-
-
-function updateConstruction(value){
-
-    value=Number(value);
-
-    const timeline=
-        document.getElementById("timeline");
-
-    timeline.value=value;
-
-
-    const day=Math.round(
-        (value/100)*365
-    );
-
-    document.getElementById(
-        "dayLabel"
-    ).textContent=`DAY ${day}`;
-
-
-    let stage;
-
-    if(value<15){
-        stage=stages[0];
-    }else if(value<30){
-        stage=stages[1];
-    }else if(value<60){
-        stage=stages[2];
-    }else if(value<78){
-        stage=stages[3];
-    }else if(value<92){
-        stage=stages[4];
-    }else{
-        stage=stages[5];
-    }
-
-
-    document.getElementById(
-        "stageLabel"
-    ).textContent=stage;
-
-
-    /* BUILD FLOORS */
-
-    const floors=
-        document.querySelectorAll(".floor");
-
-    let floorCount=
-        Math.floor((value/100)*6);
-
-    floors.forEach(
-        (floor,index)=>{
-
-            if(index<floorCount){
-
-                floor.style.transform=
-                    "scaleY(1)";
-
-            }else{
-
-                floor.style.transform=
-                    "scaleY(0)";
-
+                aiTimer = setInterval(() => {
+                    currentAiStep++;
+                    if (currentAiStep > 3) currentAiStep = 1;
+                    setAiPhase(currentAiStep);
+                }, 2800);
+            } else {
+                stopAiTimelapse();
             }
-
-        }
-    );
-
-
-    /* ANALYTICS */
-
-    document.getElementById(
-        "completionValue"
-    ).textContent=`${value}%`;
-
-    document.getElementById(
-        "completionBar"
-    ).style.width=`${value}%`;
-
-
-    /* ACTIVE PHASE */
-
-    const phaseIndex=
-        value<15 ? 0 :
-        value<30 ? 1 :
-        value<60 ? 2 :
-        value<78 ? 3 :
-        value<92 ? 4 : 5;
-
-
-    document
-        .querySelectorAll(".phase")
-        .forEach((phase,index)=>{
-
-            phase.classList.toggle(
-                "active",
-                index===phaseIndex
-            );
-
-        });
-
-}
-
-
-function toggleSimulation(){
-
-    if(simulationRunning){
-
-        stopSimulation();
-
-    }else{
-
-        startSimulation();
-
-    }
-
-}
-
-
-function startSimulation(){
-
-    simulationRunning=true;
-
-    document.getElementById(
-        "playButton"
-    ).textContent="❚❚ PAUSE SIMULATION";
-
-
-    simulationTimer=setInterval(()=>{
-
-        const timeline=
-            document.getElementById("timeline");
-
-        let value=
-            Number(timeline.value)+.5;
-
-
-        if(value>=100){
-
-            value=100;
-            stopSimulation();
-
         }
 
+        function stopAiTimelapse() {
+            isAiPlaying = false;
+            clearInterval(aiTimer);
+            document.getElementById('ai-play-btn').innerHTML = `<i class="fa-solid fa-play"></i><span>Run AI Time-Lapse Simulation</span>`;
+        }
 
-        updateConstruction(value);
-
-    },80);
-
-}
-
-
-function stopSimulation(){
-
-    simulationRunning=false;
-
-    clearInterval(simulationTimer);
-
-    document.getElementById(
-        "playButton"
-    ).textContent="▶ PLAY AI SIMULATION";
-
-}
-
-
-function resetSimulation(){
-
-    stopSimulation();
-
-    updateConstruction(0);
-
-}
-
-
-function selectPhase(value){
-
-    updateConstruction(value);
-
-}
-
-
-/* ============================================================
-   NAVIGATION
-============================================================ */
-
-function scrollToSection(id){
-
-    document
-        .getElementById(id)
-        .scrollIntoView({
-            behavior:"smooth"
+        // Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
         });
-
-}
-
-</script>
-
+    </script>
 </body>
 </html>
