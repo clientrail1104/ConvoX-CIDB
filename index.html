@@ -40,7 +40,7 @@
           <div class="field"><label>No Pendaftaran Syarikat <span class="req">*</span></label><input id="noSyarikat" name="noSyarikat" required></div>
           <div class="field"><label>Tel. Bimbit <span class="req">*</span></label><input id="tel" name="tel" required placeholder="Contoh: 0123456789" inputmode="tel"></div>
           <div class="field"><label>Email <span class="req">*</span></label><input id="email" name="email" required type="email" placeholder="nama@email.com"></div>
-          <div class="field"><label>Kategori Pelanggan <span class="req">*</span></label><select id="kategori" name="kategori" required><option value="">Pilih kategori</option><option>Kontraktor</option><option>Orang Awam</option><option>Syarikat</option><option>Agensi Kerajaan</option><option>Lain-lain</option></select></div>
+          <div class="field"><label>Kategori Pelanggan <span class="req">*</span></label><select id="kategori" name="kategori" required><option value="">Pilih kategori</option><option>Kontraktor</option><option>Personal Binaan</option><option>Pertubuhan</option><option>Syarikat</option><option>Individu</option><option>Agensi Kerajaan</option><option>Lain-lain Kategori</option></select></div>
           <div class="field full"><label>Dokumen Sokongan</label><div class="dropzone"><input id="attachments" type="file" multiple><div class="note">Pelbagai fail boleh dipilih serentak. Tiada sekatan format pada prototaip ini.</div></div><div class="file-list" id="attachmentList"></div></div>
         </div></div>
         <div class="actions"><button type="reset" class="btn">Set Semula</button><button class="btn primary" type="submit">Hantar</button></div>
@@ -73,7 +73,7 @@
     const negeri=document.getElementById('negeri'); STATES.forEach(s=>negeri.add(new Option(s,s)));
     const chat=document.getElementById('chat'), input=document.getElementById('chatInput'), micBtn=document.getElementById('micBtn'), voiceStatus=document.getElementById('voiceStatus');
     const requiredIds=['tajuk','negeri','huraian','nama','mykad','syarikat','noSyarikat','tel','email','kategori'];
-    const flow=[['tajuk','Apakah Tajuk Maklumbalas anda?'],['negeri','Negeri terlibat?'],['huraian','Sila terangkan Huraian Maklumbalas.'],['nama','Nama penuh anda?'],['mykad','Nombor MyKad atau Pasport?'],['syarikat','Nama syarikat?'],['noSyarikat','Nombor pendaftaran syarikat?'],['tel','Nombor telefon bimbit?'],['email','Alamat email?'],['kategori','Kategori pelanggan? Contoh: Kontraktor.'],['attachments','Jika ada, tambah Dokumen Sokongan terus pada borang dalam chat. Taip “tiada” jika tiada.']];
+    const flow=[['tajuk','Apakah Tajuk Maklumbalas anda?'],['negeri','Negeri terlibat?'],['huraian','Sila terangkan Huraian Maklumbalas.'],['nama','Nama penuh anda?'],['mykad','Nombor MyKad atau Pasport?'],['syarikat','Nama syarikat?'],['noSyarikat','Nombor pendaftaran syarikat?'],['tel','Nombor telefon bimbit?'],['email','Alamat email?'],['kategori','Kategori pelanggan? Pilih Kontraktor, Personal Binaan, Pertubuhan, Syarikat, Individu, Agensi Kerajaan atau Lain-lain Kategori.'],['attachments','Jika ada, tambah Dokumen Sokongan terus pada borang dalam chat. Taip “tiada” jika tiada.']];
     let mode='menu',step=0,speakEnabled=true,listening=false,recognition=null,manualStop=true,ttsPause=false;
     const kbDialog=document.getElementById('kbDialog');
 
@@ -95,7 +95,23 @@
 
     const attachments=document.getElementById('attachments');attachments.addEventListener('change',()=>{const list=document.getElementById('attachmentList');list.innerHTML='';[...attachments.files].forEach(f=>{const d=document.createElement('div');d.className='file-item';d.innerHTML=`<span>${escapeHtml(f.name)}</span><span>${formatBytes(f.size)}</span>`;list.appendChild(d)})});
     document.getElementById('supportForm').addEventListener('reset',()=>setTimeout(()=>{document.getElementById('attachmentList').innerHTML='';updateProgress()},0));
-    document.getElementById('supportForm').addEventListener('submit',e=>{e.preventDefault();if(!e.target.reportValidity())return;const data=Object.fromEntries(new FormData(e.target).entries());localStorage.setItem('ebantuan_last_submission',JSON.stringify({...data,attachmentNames:[...attachments.files].map(f=>f.name),submittedAt:new Date().toISOString()}));toast('Borang lengkap. Demo submission disimpan dalam browser. Sambungkan endpoint/backend untuk penghantaran sebenar.');});
+    const TELEPHONY_URL='https://clientrail1104.github.io/Telephony/';
+    const TELEPHONY_FIELD_MAP={tajuk:'tajuk',negeri:'negeri',huraian:'huraian',nama:'nama',mykad:'mykad',syarikat:'syarikat',noSyarikat:'noPendaftaran',tel:'telefon',email:'email',kategori:'kategori'};
+    function buildSubmissionPayload(){
+      const values={};Object.keys(TELEPHONY_FIELD_MAP).forEach(id=>values[id]=document.getElementById(id).value);
+      return {values,attachmentNames:[...attachments.files].map(f=>f.name),submittedAt:new Date().toISOString()};
+    }
+    function setTargetValue(doc,targetId,value){const el=doc.getElementById(targetId);if(!el)return false;if(el.tagName==='SELECT'){const opt=[...el.options].find(o=>o.value.toLowerCase()===String(value).toLowerCase()||o.text.toLowerCase()===String(value).toLowerCase());if(opt)el.value=opt.value;else return false}else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));return true}
+    function transferFiles(doc){const fileInput=doc.getElementById('dokumen');if(!fileInput||!attachments.files.length||typeof DataTransfer==='undefined')return;const dt=new DataTransfer();[...attachments.files].forEach(f=>dt.items.add(f));try{fileInput.files=dt.files;fileInput.dispatchEvent(new Event('change',{bubbles:true}))}catch{}}
+    function openTelephonyAndAutofill(payload){
+      const encoded=encodeURIComponent(JSON.stringify(payload.values));
+      const target=window.open(TELEPHONY_URL+'?autofill='+encoded,'_blank');
+      if(!target){toast('Popup disekat. Benarkan pop-up untuk membuka Borang e-Bantuan.');return}
+      let attempts=0;const timer=setInterval(()=>{attempts++;if(target.closed){clearInterval(timer);return}
+        try{target.postMessage({type:'EBANTUAN_AUTOFILL',values:payload.values,files:[...attachments.files]},'https://clientrail1104.github.io')}catch{}
+        try{const doc=target.document;if(!doc||!doc.getElementById('ebantuanForm')){if(attempts>80)clearInterval(timer);return}Object.entries(TELEPHONY_FIELD_MAP).forEach(([sourceId,targetId])=>setTargetValue(doc,targetId,payload.values[sourceId]||''));transferFiles(doc);const first=doc.getElementById('tajuk');if(first)first.scrollIntoView({behavior:'smooth',block:'center'});clearInterval(timer);toast('Borang e-Bantuan dibuka dan auto-filled. Semak sebelum klik Hantar pada halaman tersebut.')}catch(err){if(attempts>40){clearInterval(timer);toast('Halaman Telephony dibuka. Jika auto-fill tidak muncul, pasang fail telephony-autofill-receiver.js pada halaman Telephony.')}}},250)
+    }
+    document.getElementById('supportForm').addEventListener('submit',e=>{e.preventDefault();if(!e.target.reportValidity())return;const payload=buildSubmissionPayload();localStorage.setItem('ebantuan_last_submission',JSON.stringify(payload));openTelephonyAndAutofill(payload);});
 
     // IndexedDB knowledge base
     const DB='ebantuan-kb',STORE='docs';function db(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE,{keyPath:'id',autoIncrement:true})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
