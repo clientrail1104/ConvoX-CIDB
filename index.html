@@ -1,286 +1,2319 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoiceMatrix - Human vs Voicebot Analyzer</title>
-    <!-- Tailwind CSS for modern design -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for comparative metrics graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Assist Bot</title>
 
-    <!-- Header -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-500/20">V</div>
-                <div>
-                    <h1 class="font-bold text-lg tracking-tight">VoiceMatrix AI</h1>
-                    <p class="text-xs text-slate-400">Human vs Voicebot Comparative Engine</p>
-                </div>
-            </div>
-            <div class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1.5 rounded-full font-medium">
-                Engine: WebAudio Neural-Sim v2.4
-            </div>
-        </div>
+<style>
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1d4ed8;
+  --secondary:#0f172a;
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --warning:#d97706;
+  --shadow:0 10px 30px rgba(15,23,42,.08);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:#0f172a;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+.app{
+  min-height:100vh;
+  display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:270px;
+  background:#0f172a;
+  color:white;
+  padding:24px 16px;
+  display:flex;
+  flex-direction:column;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:5px 10px 28px;
+}
+
+.brand-icon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
+}
+
+.brand h1{
+  margin:0;
+  font-size:18px;
+}
+
+.brand small{
+  color:#94a3b8;
+}
+
+.menu-title{
+  font-size:11px;
+  text-transform:uppercase;
+  color:#64748b;
+  letter-spacing:1px;
+  margin:10px 10px;
+}
+
+.menu-btn{
+  border:0;
+  background:transparent;
+  color:#cbd5e1;
+  padding:14px;
+  width:100%;
+  border-radius:10px;
+  text-align:left;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:6px;
+}
+
+.menu-btn:hover{
+  background:#1e293b;
+  color:white;
+}
+
+.menu-btn.active{
+  background:#2563eb;
+  color:white;
+}
+
+.menu-icon{
+  font-size:20px;
+  width:25px;
+  text-align:center;
+}
+
+.sidebar-footer{
+  margin-top:auto;
+  color:#64748b;
+  font-size:12px;
+  padding:12px 10px;
+}
+
+/* MAIN */
+
+.main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  height:70px;
+  background:white;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+}
+
+.page-title{
+  font-size:20px;
+  font-weight:700;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.status-dot{
+  width:8px;
+  height:8px;
+  background:var(--success);
+  border-radius:50%;
+}
+
+.content{
+  padding:28px;
+  max-width:1400px;
+  width:100%;
+  margin:auto;
+}
+
+/* DASHBOARD */
+
+.welcome{
+  background:linear-gradient(135deg,#1d4ed8,#4f46e5);
+  color:white;
+  border-radius:18px;
+  padding:30px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+
+.welcome h2{
+  margin:0 0 8px;
+  font-size:28px;
+}
+
+.welcome p{
+  margin:0;
+  color:#dbeafe;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+}
+
+.menu-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:25px;
+  cursor:pointer;
+  transition:.2s;
+  box-shadow:var(--shadow);
+}
+
+.menu-card:hover{
+  transform:translateY(-3px);
+  border-color:#93c5fd;
+}
+
+.menu-card-icon{
+  width:55px;
+  height:55px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  margin-bottom:18px;
+}
+
+.blue{
+  background:#dbeafe;
+  color:#2563eb;
+}
+
+.purple{
+  background:#ede9fe;
+  color:#7c3aed;
+}
+
+.menu-card h3{
+  margin:0 0 8px;
+}
+
+.menu-card p{
+  color:var(--muted);
+  line-height:1.6;
+  margin:0 0 18px;
+}
+
+.card-link{
+  color:var(--primary);
+  font-weight:600;
+}
+
+/* CHAT */
+
+.chat-layout{
+  display:grid;
+  grid-template-columns:1fr 330px;
+  gap:20px;
+}
+
+.card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+
+.chat-card{
+  min-height:650px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.chat-header{
+  padding:18px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.chat-header h3{
+  margin:0;
+}
+
+.chat-messages{
+  flex:1;
+  padding:22px;
+  overflow-y:auto;
+  background:#f8fafc;
+}
+
+.message{
+  display:flex;
+  margin-bottom:18px;
+}
+
+.message.user{
+  justify-content:flex-end;
+}
+
+.bubble{
+  max-width:75%;
+  padding:12px 15px;
+  border-radius:15px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+
+.message.bot .bubble{
+  background:white;
+  border:1px solid var(--border);
+}
+
+.message.user .bubble{
+  background:var(--primary);
+  color:white;
+}
+
+.chat-input{
+  padding:15px;
+  border-top:1px solid var(--border);
+  background:white;
+}
+
+.input-row{
+  display:flex;
+  gap:8px;
+}
+
+.chat-text{
+  flex:1;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:13px 15px;
+  outline:none;
+}
+
+.chat-text:focus{
+  border-color:#60a5fa;
+  box-shadow:0 0 0 3px #dbeafe;
+}
+
+.icon-btn,.send-btn{
+  border:0;
+  border-radius:12px;
+  cursor:pointer;
+  min-width:48px;
+  padding:12px 15px;
+}
+
+.icon-btn{
+  background:#e2e8f0;
+}
+
+.send-btn{
+  background:var(--primary);
+  color:white;
+}
+
+.mic-active{
+  background:#fee2e2!important;
+  color:#dc2626;
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{
+  50%{box-shadow:0 0 0 8px rgba(220,38,38,.12)}
+}
+
+.voice-status{
+  padding:8px 3px 0;
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* SIDE PANEL */
+
+.side-panel{
+  padding:20px;
+}
+
+.side-panel h3{
+  margin-top:0;
+}
+
+.info-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.info-list li{
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  font-size:14px;
+  color:#475569;
+}
+
+.info-list strong{
+  color:#0f172a;
+}
+
+/* KB */
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:11px 16px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn-primary{
+  background:var(--primary);
+  color:white;
+}
+
+.btn-secondary{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+
+.btn-danger{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+.kb-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.stat{
+  background:white;
+  border:1px solid var(--border);
+  padding:18px;
+  border-radius:14px;
+}
+
+.stat strong{
+  display:block;
+  font-size:25px;
+  margin-bottom:4px;
+}
+
+.stat span{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.file-table{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.file-row{
+  display:grid;
+  grid-template-columns:1fr 150px 100px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  align-items:center;
+  gap:15px;
+}
+
+.file-row:last-child{
+  border-bottom:0;
+}
+
+.file-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.file-type{
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* FORM */
+
+.form-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:24px;
+  box-shadow:var(--shadow);
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+.field label{
+  font-weight:600;
+  font-size:13px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  outline:none;
+  background:white;
+}
+
+.field textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:#60a5fa;
+  box-shadow:0 0 0 3px #dbeafe;
+}
+
+.form-actions{
+  margin-top:22px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.attachments{
+  border:2px dashed #cbd5e1;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.attachments input{
+  margin-top:10px;
+}
+
+.attachment-list{
+  margin-top:12px;
+  text-align:left;
+}
+
+.attachment-item{
+  padding:8px 0;
+  font-size:13px;
+  color:#475569;
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  bottom:25px;
+  right:25px;
+  background:#0f172a;
+  color:white;
+  padding:14px 18px;
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  transform:translateY(100px);
+  opacity:0;
+  transition:.25s;
+  z-index:999;
+}
+
+.toast.show{
+  transform:translateY(0);
+  opacity:1;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+  .sidebar{
+    width:76px;
+    padding:15px 8px;
+  }
+
+  .brand{
+    justify-content:center;
+    padding:5px 0 20px;
+  }
+
+  .brand-text,
+  .menu-title,
+  .menu-label,
+  .sidebar-footer{
+    display:none;
+  }
+
+  .menu-btn{
+    justify-content:center;
+    padding:14px 5px;
+  }
+
+  .chat-layout{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:700px){
+  .content{
+    padding:15px;
+  }
+
+  .topbar{
+    padding:0 15px;
+  }
+
+  .menu-grid,
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .kb-stats{
+    grid-template-columns:1fr;
+  }
+
+  .file-row{
+    grid-template-columns:1fr;
+  }
+
+  .welcome h2{
+    font-size:22px;
+  }
+
+  .bubble{
+    max-width:90%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-icon">🤖</div>
+      <div class="brand-text">
+        <h1>Voice Assist</h1>
+        <small>Customer Assistant</small>
+      </div>
+    </div>
+
+    <div class="menu-title">Main Menu</div>
+
+    <button class="menu-btn active" onclick="showPage('home')" id="nav-home">
+      <span class="menu-icon">🏠</span>
+      <span class="menu-label">Home</span>
+    </button>
+
+    <button class="menu-btn" onclick="showPage('cancel')" id="nav-cancel">
+      <span class="menu-icon">✉️</span>
+      <span class="menu-label">Cancel Email ID</span>
+    </button>
+
+    <button class="menu-btn" onclick="showPage('issue')" id="nav-issue">
+      <span class="menu-icon">📝</span>
+      <span class="menu-label">Other Issue</span>
+    </button>
+
+    <div class="menu-title" style="margin-top:25px">Administration</div>
+
+    <button class="menu-btn" onclick="showPage('knowledge')" id="nav-knowledge">
+      <span class="menu-icon">📚</span>
+      <span class="menu-label">Knowledge Base</span>
+    </button>
+
+    <div class="sidebar-footer">
+      Voice Assist Prototype<br>
+      Local knowledge storage
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="page-title" id="pageTitle">Voice Assist</div>
+
+      <div class="status">
+        <span class="status-dot"></span>
+        Assistant Online
+      </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- Left Panel: Controls & Upload Settings -->
-        <section class="lg:col-span-1 space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <h2 class="text-base font-semibold mb-4 text-slate-200 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                    1. Input & Source Options
-                </h2>
+    <section class="content">
 
-                <!-- Upload Dropzone -->
-                <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-6 text-center cursor-pointer transition-all bg-slate-950/50 group">
-                    <input type="file" id="audioFile" accept="audio/*" class="hidden">
-                    <svg class="w-10 h-10 mx-auto text-slate-500 group-hover:text-indigo-400 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                    <p class="text-sm font-medium text-slate-300">Drop audio file here, or <span class="text-indigo-400 underline">browse</span></p>
-                    <p class="text-xs text-slate-500 mt-1">Supports WAV, MP3, M4A (Max 10MB)</p>
+      <!-- HOME -->
+
+      <div id="page-home">
+
+        <div class="welcome">
+          <h2>How can I assist you?</h2>
+          <p>Choose one of the two services below or use your voice to interact with the assistant.</p>
+        </div>
+
+        <div class="menu-grid">
+
+          <div class="menu-card" onclick="showPage('cancel')">
+            <div class="menu-card-icon blue">✉️</div>
+            <h3>Cancel Email ID</h3>
+            <p>
+              Ask questions about cancelling an email ID.
+              The assistant will search the uploaded knowledge base
+              and provide the relevant response.
+            </p>
+            <span class="card-link">Open assistant →</span>
+          </div>
+
+          <div class="menu-card" onclick="showPage('issue')">
+            <div class="menu-card-icon purple">📝</div>
+            <h3>Other Issue</h3>
+            <p>
+              Tell the assistant about your issue by voice or text.
+              It will help collect the required information and
+              fill the submission form.
+            </p>
+            <span class="card-link">Start submission →</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- CANCEL EMAIL -->
+
+      <div id="page-cancel" style="display:none">
+
+        <div class="chat-layout">
+
+          <div class="card chat-card">
+
+            <div class="chat-header">
+              <div>
+                <h3>Cancel Email ID Assistant</h3>
+                <small style="color:#64748b">
+                  Knowledge-base powered
+                </small>
+              </div>
+
+              <button class="btn btn-secondary" onclick="clearChat()">
+                Clear
+              </button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+
+              <div class="message bot">
+                <div class="bubble">
+                  Hello! I can assist you with <b>Cancel Email ID</b> enquiries.
+
+                  You can type your question or press the microphone button and speak continuously.
+
+                  Try:
+                  "How do I cancel my email ID?"
                 </div>
+              </div>
 
-                <div id="fileInfo" class="hidden mt-3 text-xs bg-indigo-950/40 border border-indigo-800/50 p-2.5 rounded-lg text-indigo-300 flex justify-between items-center">
-                    <span id="fileName" class="truncate font-medium">file.mp3</span>
-                    <button onclick="resetUpload()" class="text-slate-400 hover:text-white">&times;</button>
-                </div>
+            </div>
 
-                <!-- Comparative Settings -->
-                <div class="mt-6 space-y-4">
-                    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Analysis Settings</h3>
-                    
-                    <div>
-                        <label class="text-xs text-slate-300 block mb-1">Target Comparison Benchmark</label>
-                        <select id="benchmarkType" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                            <option value="bot_neural">Standard Voicebot (Neural TTS)</option>
-                            <option value="bot_ivr">Legacy IVR (Robotic/Synthetic)</option>
-                            <option value="human_avg">Average Human Profile</option>
-                        </select>
-                    </div>
+            <div class="chat-input">
 
-                    <div>
-                        <label class="text-xs text-slate-300 block mb-1">Sensitivity Threshold (<span id="sensVal">85</span>%)</label>
-                        <input type="range" id="sensitivity" min="50" max="100" value="85" class="w-full accent-indigo-500 bg-slate-800 rounded-lg h-2 cursor-pointer" oninput="document.getElementById('sensVal').innerText = this.value">
-                    </div>
-                </div>
+              <div class="input-row">
 
-                <button onclick="runAnalysis()" id="analyzeBtn" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/30 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Run Immediate Comparison
+                <input
+                  id="chatInput"
+                  class="chat-text"
+                  placeholder="Type your question..."
+                  onkeydown="handleChatKey(event)"
+                >
+
+                <button
+                  id="micBtn"
+                  class="icon-btn"
+                  title="Start / Stop microphone"
+                  onclick="toggleVoice()"
+                >
+                  🎙️
                 </button>
-            </div>
-        </section>
 
-        <!-- Right Panel: Results & Visualization -->
-        <section class="lg:col-span-2 space-y-6">
-            
-            <!-- Quick Verdict Card -->
-            <div id="resultsCard" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden hidden">
-                <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-                    <svg class="w-32 h-32 text-indigo-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.03 2.75z"/></svg>
-                </div>
+                <button class="send-btn" onclick="sendChat()">
+                  ➤
+                </button>
 
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-400 mb-1">Analysis Result Summary</h2>
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
-                    <div>
-                        <div id="verdictBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            Likely Real Human Voice
-                        </div>
-                        <h3 id="verdictTitle" class="text-2xl font-bold tracking-tight">Organic Speech Pattern Detected</h3>
-                    </div>
-                    <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-xl text-center min-w-[140px]">
-                        <span class="text-xs text-slate-400 block">AI Probability</span>
-                        <span id="aiScore" class="text-3xl font-extrabold text-indigo-400">12%</span>
-                    </div>
-                </div>
+              </div>
 
-                <!-- Comparative Breakdown Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-800/80">
-                    <div>
-                        <span class="text-xs text-slate-400 block">Pitch Micro-Jitter</span>
-                        <span id="mJitter" class="text-lg font-semibold text-slate-200">0.84%</span>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 block">Spectral Flatness</span>
-                        <span id="mFlatness" class="text-lg font-semibold text-slate-200">0.14</span>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 block">Harmonic Index</span>
-                        <span id="mHarmonic" class="text-lg font-semibold text-slate-200">89.2 dB</span>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 block">Cadence Variance</span>
-                        <span id="mCadence" class="text-lg font-semibold text-slate-200">High (Organic)</span>
-                    </div>
-                </div>
+              <div class="voice-status" id="voiceStatus">
+                Microphone stopped. Click the mic to start continuous voice assistance.
+              </div>
+
             </div>
 
-            <!-- Visual Graph Comparison -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-semibold text-slate-200">Acoustic Signature Comparison</h3>
-                    <span class="text-xs text-slate-500">Normalized Units</span>
-                </div>
-                <div class="h-64 relative flex items-center justify-center">
-                    <canvas id="comparisonChart"></canvas>
-                </div>
+          </div>
+
+          <div class="card side-panel">
+
+            <h3>Assistant</h3>
+
+            <ul class="info-list">
+              <li><strong>Voice:</strong> Continuous speech recognition</li>
+              <li><strong>Knowledge:</strong> Uploaded documents</li>
+              <li><strong>Mode:</strong> Chat + Voice</li>
+              <li><strong>Storage:</strong> Browser IndexedDB</li>
+            </ul>
+
+            <br>
+
+            <button class="btn btn-primary" onclick="showPage('knowledge')">
+              📚 Manage Knowledge Base
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- OTHER ISSUE -->
+
+      <div id="page-issue" style="display:none">
+
+        <div class="welcome">
+          <h2>Other Issue</h2>
+          <p>
+            Enter the information manually or use the voice assistant.
+            The assistant can populate the fields from your conversation.
+          </p>
+        </div>
+
+        <div class="form-card">
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+            <div>
+              <h3 style="margin:0">Issue Submission Form</h3>
+              <small style="color:#64748b">
+                External form URL can be connected later.
+              </small>
             </div>
 
-        </section>
-    </main>
+            <button class="btn btn-secondary" onclick="startIssueVoice()">
+              🎙️ Voice Fill
+            </button>
+          </div>
 
-    <!-- JavaScript Execution Engine -->
-    <script>
-        let selectedFile = null;
-        let chartInstance = null;
+          <div class="form-grid">
 
-        // Setup dropzone interactions
-        const dropzone = document.getElementById('dropzone');
-        const fileInput = document.getElementById('audioFile');
+            <div class="field">
+              <label>Response Title *</label>
+              <input id="responseTitle" placeholder="Response title">
+            </div>
 
-        dropzone.onclick = () => fileInput.click();
-        fileInput.onchange = (e) => handleFile(e.target.files[0]);
-        
-        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('border-indigo-500'); };
-        dropzone.ondragleave = () => dropzone.classList.remove('border-indigo-500');
-        dropzone.ondrop = (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('border-indigo-500');
-            if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-        };
+            <div class="field">
+              <label>Negeri *</label>
+              <select id="negeri">
+                <option value="">Select Negeri</option>
+                <option>Johor</option>
+                <option>Kedah</option>
+                <option>Kelantan</option>
+                <option>Melaka</option>
+                <option>Negeri Sembilan</option>
+                <option>Pahang</option>
+                <option>Perak</option>
+                <option>Perlis</option>
+                <option>Penang</option>
+                <option>Sabah</option>
+                <option>Sarawak</option>
+                <option>Selangor</option>
+                <option>Terengganu</option>
+                <option>Kuala Lumpur</option>
+                <option>Putrajaya</option>
+                <option>Labuan</option>
+              </select>
+            </div>
 
-        function handleFile(file) {
-            if(!file.type.startsWith('audio/')) {
-                alert('Please upload a valid audio file.');
-                return;
-            }
-            selectedFile = file;
-            document.getElementById('fileName').innerText = file.name;
-            document.getElementById('fileInfo').classList.remove('hidden');
+            <div class="field full">
+              <label>Summary of Issue *</label>
+              <textarea id="summary" placeholder="Describe the issue..."></textarea>
+            </div>
+
+            <div class="field">
+              <label>Name *</label>
+              <input id="name" placeholder="Full name">
+            </div>
+
+            <div class="field">
+              <label>NRIC / Passport *</label>
+              <input id="nric" placeholder="NRIC or passport number">
+            </div>
+
+            <div class="field">
+              <label>Company Name</label>
+              <input id="company" placeholder="Company name">
+            </div>
+
+            <div class="field">
+              <label>SSM No.</label>
+              <input id="ssm" placeholder="SSM registration number">
+            </div>
+
+            <div class="field">
+              <label>H/P *</label>
+              <input id="phone" type="tel" placeholder="Mobile number">
+            </div>
+
+            <div class="field">
+              <label>Email *</label>
+              <input id="email" type="email" placeholder="Email address">
+            </div>
+
+            <div class="field">
+              <label>Category *</label>
+              <select id="category">
+                <option value="">Select category</option>
+                <option value="Individual">Individual</option>
+                <option value="Company">Company</option>
+              </select>
+            </div>
+
+            <div class="field full">
+
+              <label>Attachments</label>
+
+              <div class="attachments">
+
+                <div style="font-size:25px">📎</div>
+
+                <div>
+                  Upload multiple attachments.
+                </div>
+
+                <small style="color:#64748b">
+                  Any file format is accepted by the browser interface.
+                </small>
+
+                <br>
+
+                <input
+                  id="attachments"
+                  type="file"
+                  multiple
+                  onchange="displayAttachments()"
+                >
+
+                <div class="attachment-list" id="attachmentList"></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+
+            <button class="btn btn-primary" onclick="prepareSubmission()">
+              🚀 Prepare Submission
+            </button>
+
+            <button class="btn btn-secondary" onclick="clearIssueForm()">
+              Clear Form
+            </button>
+
+            <button class="btn btn-secondary" onclick="downloadJSON()">
+              Download JSON
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- KNOWLEDGE BASE -->
+
+      <div id="page-knowledge" style="display:none">
+
+        <div class="welcome">
+          <h2>Knowledge Base</h2>
+          <p>
+            Upload documents in bulk. Files are stored locally in IndexedDB
+            for this HTML prototype.
+          </p>
+        </div>
+
+        <div class="kb-stats">
+
+          <div class="stat">
+            <strong id="kbCount">0</strong>
+            <span>Knowledge files</span>
+          </div>
+
+          <div class="stat">
+            <strong id="kbTextCount">0</strong>
+            <span>Searchable text files</span>
+          </div>
+
+          <div class="stat">
+            <strong id="kbSize">0 KB</strong>
+            <span>Stored size</span>
+          </div>
+
+        </div>
+
+        <div class="card" style="padding:20px;margin-bottom:20px">
+
+          <div class="toolbar">
+
+            <label class="btn btn-primary">
+              📤 Bulk Upload
+              <input
+                id="kbUpload"
+                type="file"
+                multiple
+                hidden
+                onchange="uploadKnowledgeBase(event)"
+              >
+            </label>
+
+            <button class="btn btn-secondary" onclick="exportKB()">
+              Export KB
+            </button>
+
+            <button class="btn btn-danger" onclick="deleteAllKB()">
+              Delete All
+            </button>
+
+          </div>
+
+          <div style="font-size:13px;color:#64748b;line-height:1.6">
+            You can select hundreds or thousands of files at once.
+            The browser will process them in batches. For production,
+            connect this interface to server/cloud storage for effectively
+            unlimited knowledge-base capacity.
+          </div>
+
+        </div>
+
+        <div class="file-table">
+
+          <div class="file-row" style="font-weight:700;background:#f8fafc">
+            <div>File</div>
+            <div>Type</div>
+            <div>Action</div>
+          </div>
+
+          <div id="kbFiles">
+            <div style="padding:25px;text-align:center;color:#64748b">
+              No knowledge files uploaded yet.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
+
+/*
+  Replace this later with your real external form URL.
+
+  Example:
+  const EXTERNAL_FORM_URL = "https://example.com/form";
+*/
+const EXTERNAL_FORM_URL = "";
+
+
+/* ============================================================
+   PAGE NAVIGATION
+   ============================================================ */
+
+const pages = [
+  "home",
+  "cancel",
+  "issue",
+  "knowledge"
+];
+
+const titles = {
+  home:"Voice Assist",
+  cancel:"Cancel Email ID",
+  issue:"Other Issue",
+  knowledge:"Knowledge Base"
+};
+
+function showPage(page){
+
+  pages.forEach(p=>{
+    const el=document.getElementById("page-"+p);
+    if(el) el.style.display = p===page ? "block" : "none";
+
+    const nav=document.getElementById("nav-"+p);
+    if(nav) nav.classList.toggle("active",p===page);
+  });
+
+  document.getElementById("pageTitle").textContent=titles[page];
+
+  if(page==="knowledge"){
+    renderKB();
+  }
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+function toast(message){
+
+  const el=document.getElementById("toast");
+
+  el.textContent=message;
+  el.classList.add("show");
+
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },3000);
+}
+
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+
+function addMessage(text,type="bot"){
+
+  const messages=document.getElementById("chatMessages");
+
+  const wrapper=document.createElement("div");
+  wrapper.className="message "+type;
+
+  const bubble=document.createElement("div");
+  bubble.className="bubble";
+
+  bubble.innerHTML=safeHTML(text);
+
+  wrapper.appendChild(bubble);
+  messages.appendChild(wrapper);
+
+  messages.scrollTop=messages.scrollHeight;
+}
+
+function safeHTML(text){
+
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/\n/g,"<br>");
+}
+
+function handleChatKey(event){
+
+  if(event.key==="Enter"){
+    event.preventDefault();
+    sendChat();
+  }
+}
+
+async function sendChat(){
+
+  const input=document.getElementById("chatInput");
+
+  const text=input.value.trim();
+
+  if(!text) return;
+
+  addMessage(text,"user");
+
+  input.value="";
+
+  const answer=await answerFromKnowledgeBase(text);
+
+  addMessage(answer,"bot");
+
+  speak(answer);
+}
+
+
+/* ============================================================
+   KNOWLEDGE BASE - INDEXED DB
+   ============================================================ */
+
+const DB_NAME="VoiceAssistKnowledgeDB";
+const DB_VERSION=1;
+const STORE="documents";
+
+function openDB(){
+
+  return new Promise((resolve,reject)=>{
+
+    const request=indexedDB.open(DB_NAME,DB_VERSION);
+
+    request.onupgradeneeded=event=>{
+
+      const db=event.target.result;
+
+      if(!db.objectStoreNames.contains(STORE)){
+        db.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
+      }
+
+    };
+
+    request.onsuccess=()=>resolve(request.result);
+
+    request.onerror=()=>reject(request.error);
+
+  });
+}
+
+
+async function saveDocument(documentData){
+
+  const db=await openDB();
+
+  return new Promise((resolve,reject)=>{
+
+    const tx=db.transaction(STORE,"readwrite");
+
+    tx.objectStore(STORE).add(documentData);
+
+    tx.oncomplete=()=>resolve();
+
+    tx.onerror=()=>reject(tx.error);
+
+  });
+}
+
+
+async function getAllDocuments(){
+
+  const db=await openDB();
+
+  return new Promise((resolve,reject)=>{
+
+    const tx=db.transaction(STORE,"readonly");
+
+    const request=tx.objectStore(STORE).getAll();
+
+    request.onsuccess=()=>resolve(request.result);
+
+    request.onerror=()=>reject(request.error);
+
+  });
+}
+
+
+async function deleteDocument(id){
+
+  const db=await openDB();
+
+  return new Promise((resolve,reject)=>{
+
+    const tx=db.transaction(STORE,"readwrite");
+
+    tx.objectStore(STORE).delete(id);
+
+    tx.oncomplete=()=>resolve();
+
+    tx.onerror=()=>reject(tx.error);
+
+  });
+}
+
+
+async function deleteAllKB(){
+
+  if(!confirm("Delete the entire local knowledge base?")) return;
+
+  const db=await openDB();
+
+  await new Promise((resolve,reject)=>{
+
+    const tx=db.transaction(STORE,"readwrite");
+
+    tx.objectStore(STORE).clear();
+
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error);
+
+  });
+
+  renderKB();
+
+  toast("Knowledge base deleted.");
+}
+
+
+/* ============================================================
+   FILE READING
+   ============================================================ */
+
+async function readTextFile(file){
+
+  const textTypes=[
+    "text/",
+    "application/json",
+    "application/xml",
+    "application/javascript"
+  ];
+
+  const extension=file.name.split(".").pop().toLowerCase();
+
+  const supported=[
+    "txt","md","csv","json","xml","html","htm",
+    "js","css","log","yaml","yml"
+  ];
+
+  if(
+    textTypes.some(t=>file.type.startsWith(t)) ||
+    supported.includes(extension)
+  ){
+
+    try{
+      return await file.text();
+    }catch(e){
+      return "";
+    }
+
+  }
+
+  /*
+    Binary formats are accepted and stored.
+
+    To make PDF/DOCX/PPTX/XLSX searchable, add libraries such as:
+    - PDF.js
+    - Mammoth
+    - SheetJS
+    - PptxGenJS / extraction library
+
+    The prototype deliberately accepts the files without
+    pretending that binary contents are searchable.
+  */
+
+  return "";
+}
+
+
+async function uploadKnowledgeBase(event){
+
+  const files=[...event.target.files];
+
+  if(!files.length) return;
+
+  toast(Uploading ${files.length} file(s)...);
+
+  let completed=0;
+
+  /*
+    Sequential processing avoids freezing the browser when
+    a large number of files are selected.
+  */
+
+  for(const file of files){
+
+    try{
+
+      const text=await readTextFile(file);
+
+      await saveDocument({
+        name:file.name,
+        type:file.type || "application/octet-stream",
+        size:file.size,
+        lastModified:file.lastModified,
+        text:text,
+        uploadedAt:new Date().toISOString()
+      });
+
+      completed++;
+
+    }catch(error){
+
+      console.error("Upload error:",error);
+
+    }
+
+    if(completed % 25===0){
+      toast(Processed ${completed}/${files.length});
+    }
+  }
+
+  event.target.value="";
+
+  await renderKB();
+
+  toast(Completed: ${completed} file(s) uploaded.);
+}
+
+
+async function renderKB(){
+
+  const files=await getAllDocuments();
+
+  const container=document.getElementById("kbFiles");
+
+  document.getElementById("kbCount").textContent=files.length;
+
+  const textFiles=files.filter(f=>f.text && f.text.trim());
+
+  document.getElementById("kbTextCount").textContent=textFiles.length;
+
+  const total=files.reduce((sum,f)=>sum+(f.size||0),0);
+
+  document.getElementById("kbSize").textContent=formatBytes(total);
+
+  if(!files.length){
+
+    container.innerHTML=`
+      <div style="padding:25px;text-align:center;color:#64748b">
+        No knowledge files uploaded yet.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML="";
+
+  files.reverse().forEach(file=>{
+
+    const row=document.createElement("div");
+
+    row.className="file-row";
+
+    row.innerHTML=`
+      <div class="file-name">
+        📄 ${safeHTML(file.name)}
+        <br>
+        <small style="color:#94a3b8">
+          ${formatBytes(file.size)}
+        </small>
+      </div>
+
+      <div class="file-type">
+        ${safeHTML(file.type || "Unknown")}
+        <br>
+        <small>${file.text ? "Searchable" : "Stored"}</small>
+      </div>
+
+      <div>
+        <button
+          class="btn btn-danger"
+          style="padding:7px 10px"
+          onclick="removeKBFile(${file.id})"
+        >
+          Delete
+        </button>
+      </div>
+    `;
+
+    container.appendChild(row);
+
+  });
+}
+
+
+async function removeKBFile(id){
+
+  await deleteDocument(id);
+
+  renderKB();
+
+  toast("File removed.");
+}
+
+
+function formatBytes(bytes){
+
+  if(!bytes) return "0 KB";
+
+  const units=["B","KB","MB","GB","TB"];
+
+  const i=Math.floor(Math.log(bytes)/Math.log(1024));
+
+  return ${(bytes/Math.pow(1024,i)).toFixed(i===0?0:2)} ${units[i]};
+
+}
+
+
+/* ============================================================
+   KNOWLEDGE SEARCH
+   ============================================================ */
+
+function tokenize(text){
+
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s]/g," ")
+    .split(/\s+/)
+    .filter(word=>word.length>2);
+}
+
+
+function scoreDocument(query,document){
+
+  if(!document.text) return 0;
+
+  const qWords=tokenize(query);
+
+  const content=document.text.toLowerCase();
+
+  let score=0;
+
+  for(const word of qWords){
+
+    if(content.includes(word)){
+      score++;
+
+      /*
+        Exact phrase gets a bonus.
+      */
+
+      if(content.includes(query.toLowerCase())){
+        score+=4;
+      }
+    }
+
+  }
+
+  return score;
+}
+
+
+async function answerFromKnowledgeBase(query){
+
+  const docs=await getAllDocuments();
+
+  const searchable=docs.filter(d=>d.text && d.text.trim());
+
+  if(!searchable.length){
+
+    return `I don't have any searchable knowledge-base documents yet.
+
+Please upload your Cancel Email ID procedures in the Knowledge Base section.
+
+Once the documents are uploaded, I can search them when you ask your question.`;
+  }
+
+  const ranked=searchable
+    .map(doc=>({
+      doc,
+      score:scoreDocument(query,doc)
+    }))
+    .sort((a,b)=>b.score-a.score);
+
+  const best=ranked[0];
+
+  if(!best || best.score===0){
+
+    return `I couldn't find a matching answer in the current knowledge base.
+
+Please try using different keywords, or upload the relevant procedure/document to the Knowledge Base.`;
+  }
+
+  const text=best.doc.text;
+
+  /*
+    Return a useful excerpt rather than dumping an entire document.
+  */
+
+  const lower=text.toLowerCase();
+
+  const words=tokenize(query);
+
+  let position=0;
+
+  for(const word of words){
+
+    const index=lower.indexOf(word);
+
+    if(index>=0){
+      position=index;
+      break;
+    }
+
+  }
+
+  const start=Math.max(0,position-350);
+
+  const excerpt=text.substring(start,start+1200);
+
+  return `According to "${best.doc.name}":
+
+${excerpt}
+
+If you need further assistance, please provide more details about your cancellation request.`;
+}
+
+
+/* ============================================================
+   VOICE ASSISTANT
+   ============================================================ */
+
+let recognition=null;
+let voiceRunning=false;
+let manuallyStopped=false;
+
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+function initializeRecognition(){
+
+  if(!SpeechRecognition){
+
+    toast("Speech recognition is not supported. Please use Chrome or Edge.");
+
+    return false;
+  }
+
+  recognition=new SpeechRecognition();
+
+  recognition.continuous=true;
+  recognition.interimResults=true;
+
+  recognition.lang="en-MY";
+
+  recognition.onstart=()=>{
+
+    voiceRunning=true;
+
+    updateMicUI();
+
+    document.getElementById("voiceStatus").textContent =
+      "🎙️ Listening continuously... Click the microphone again to stop.";
+
+  };
+
+
+  recognition.onresult=event=>{
+
+    let finalText="";
+
+    for(
+      let i=event.resultIndex;
+      i<event.results.length;
+      i++
+    ){
+
+      const transcript=event.results[i][0].transcript;
+
+      if(event.results[i].isFinal){
+        finalText+=transcript;
+      }
+
+    }
+
+    if(finalText.trim()){
+
+      document.getElementById("chatInput").value=finalText.trim();
+
+      sendChat();
+
+    }
+
+  };
+
+
+  recognition.onerror=event=>{
+
+    console.warn("Speech recognition:",event.error);
+
+    /*
+      Some browsers stop recognition automatically after silence.
+      If the user still wants continuous mode, restart it.
+    */
+
+    if(
+      voiceRunning &&
+      !manuallyStopped &&
+      event.error!=="not-allowed"
+    ){
+
+      setTimeout(()=>{
+
+        try{
+          recognition.start();
+        }catch(e){}
+
+      },300);
+
+    }
+
+  };
+
+
+  recognition.onend=()=>{
+
+    if(voiceRunning && !manuallyStopped){
+
+      try{
+        recognition.start();
+      }catch(e){}
+
+    }else{
+
+      voiceRunning=false;
+      updateMicUI();
+
+    }
+
+  };
+
+  return true;
+}
+
+
+function toggleVoice(){
+
+  if(!recognition){
+
+    if(!initializeRecognition()) return;
+
+  }
+
+  if(voiceRunning){
+
+    manuallyStopped=true;
+    voiceRunning=false;
+
+    try{
+      recognition.stop();
+    }catch(e){}
+
+    document.getElementById("voiceStatus").textContent =
+      "Microphone stopped.";
+
+    updateMicUI();
+
+  }else{
+
+    manuallyStopped=false;
+
+    try{
+      recognition.start();
+    }catch(e){}
+
+  }
+
+}
+
+
+function updateMicUI(){
+
+  const btn=document.getElementById("micBtn");
+
+  if(!btn) return;
+
+  if(voiceRunning){
+
+    btn.classList.add("mic-active");
+    btn.textContent="⏹️";
+
+  }else{
+
+    btn.classList.remove("mic-active");
+    btn.textContent="🎙️";
+
+  }
+
+}
+
+
+/* ============================================================
+   TEXT TO SPEECH
+   ============================================================ */
+
+function speak(text){
+
+  if(!("speechSynthesis" in window)) return;
+
+  window.speechSynthesis.cancel();
+
+  const utterance=new SpeechSynthesisUtterance(
+    text.replace(/\n+/g,". ")
+  );
+
+  utterance.lang="en-MY";
+  utterance.rate=.95;
+  utterance.pitch=1;
+
+  window.speechSynthesis.speak(utterance);
+
+}
+
+
+function clearChat(){
+
+  document.getElementById("chatMessages").innerHTML=`
+    <div class="message bot">
+      <div class="bubble">
+        Chat cleared. How can I assist you with cancelling an Email ID?
+      </div>
+    </div>
+  `;
+
+}
+
+
+/* ============================================================
+   OTHER ISSUE VOICE FILL
+   ============================================================ */
+
+let issueRecognition=null;
+let issueVoiceRunning=false;
+
+function startIssueVoice(){
+
+  showPage("issue");
+
+  if(!SpeechRecognition){
+
+    toast("Speech recognition is not supported in this browser.");
+
+    return;
+  }
+
+  if(issueVoiceRunning){
+
+    issueVoiceRunning=false;
+
+    try{
+      issueRecognition.stop();
+    }catch(e){}
+
+    toast("Voice form filling stopped.");
+
+    return;
+  }
+
+  issueRecognition=new SpeechRecognition();
+
+  issueRecognition.continuous=true;
+  issueRecognition.interimResults=false;
+  issueRecognition.lang="en-MY";
+
+  issueVoiceRunning=true;
+
+  toast("Speak naturally. I will try to fill the form.");
+
+  issueRecognition.onresult=event=>{
+
+    let text="";
+
+    for(let i=event.resultIndex;i<event.results.length;i++){
+
+      if(event.results[i].isFinal){
+        text+=event.results[i][0].transcript+" ";
+      }
+
+    }
+
+    if(text.trim()){
+      processIssueVoice(text.trim());
+    }
+
+  };
+
+  issueRecognition.onerror=()=>{
+
+    if(issueVoiceRunning){
+
+      try{
+        issueRecognition.start();
+      }catch(e){}
+
+    }
+
+  };
+
+  issueRecognition.onend=()=>{
+
+    if(issueVoiceRunning){
+
+      try{
+        issueRecognition.start();
+      }catch(e){}
+
+    }
+
+  };
+
+  issueRecognition.start();
+
+}
+
+
+function processIssueVoice(text){
+
+  console.log("Voice input:",text);
+
+  const lower=text.toLowerCase();
+
+  /*
+    Basic NLP extraction.
+
+    For production, this section can be replaced by an AI
+    extraction API that returns structured JSON.
+  */
+
+  if(
+    lower.includes("individual") ||
+    lower.includes("company")
+  ){
+
+    if(lower.includes("individual")){
+      document.getElementById("category").value="Individual";
+    }
+
+    if(lower.includes("company")){
+      document.getElementById("category").value="Company";
+    }
+
+  }
+
+
+  const emailMatch=text.match(
+    /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
+  );
+
+  if(emailMatch){
+    document.getElementById("email").value=emailMatch[0];
+  }
+
+
+  const phoneMatch=text.match(
+    /(?:\+?6?0?)(?:1\d|[3-9]\d)\d{7,8}/
+  );
+
+  if(phoneMatch){
+    document.getElementById("phone").value=phoneMatch[0];
+  }
+
+
+  const nricMatch=text.match(
+    /\b\d{6}[- ]?\d{2}[- ]?\d{4}\b/
+  );
+
+  if(nricMatch){
+    document.getElementById("nric").value=nricMatch[0];
+  }
+
+
+  /*
+    Keyword-based extraction.
+  */
+
+  const patterns=[
+    {
+      field:"name",
+      keys:["my name is","name is"]
+    },
+    {
+      field:"company",
+      keys:["company name is","company is"]
+    },
+    {
+      field:"ssm",
+      keys:["ssm number is","ssm no is","ssm is"]
+    },
+    {
+      field:"responseTitle",
+      keys:["response title is","title is"]
+    },
+    {
+      field:"summary",
+      keys:["issue is","problem is","summary is"]
+    }
+  ];
+
+
+  patterns.forEach(item=>{
+
+    for(const key of item.keys){
+
+      const index=lower.indexOf(key);
+
+      if(index>=0){
+
+        let value=text.substring(index+key.length);
+
+        value=value
+          .split(/[,.]/)[0]
+          .trim();
+
+        if(value){
+          document.getElementById(item.field).value=value;
         }
 
-        function resetUpload() {
-            selectedFile = null;
-            fileInput.value = '';
-            document.getElementById('fileInfo').classList.add('hidden');
-        }
+        break;
+      }
 
-        // Initialize empty radar chart
-        window.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('comparisonChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Pitch Variance', 'Formant Stability', 'Pause Naturalness', 'Jitter/Shimmer', 'Spectral Complexity', 'Harmonic Resonance'],
-                    datasets: [{
-                        label: 'Upload Sample',
-                        data: [0, 0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                        borderColor: 'rgba(99, 102, 241, 1)',
-                        borderWidth: 2
-                    }, {
-                        label: 'Reference Benchmark',
-                        data: [50, 50, 50, 50, 50, 50],
-                        backgroundColor: 'rgba(148, 163, 184, 0.1)',
-                        borderColor: 'rgba(148, 163, 184, 0.5)',
-                        borderWidth: 1,
-                        borderDash: [4, 4]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            grid: { color: 'rgba(51, 65, 85, 0.5)' },
-                            angleLines: { color: 'rgba(51, 65, 85, 0.5)' },
-                            pointLabels: { color: '#94a3b8', font: { size: 11 } },
-                            ticks: { display: false, max: 100 }
-                        }
-                    },
-                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 12 } } } }
-                }
-            });
-        });
+    }
 
-        // Analyze logic with Web Audio API fallback to simulated heuristics
-        async function runAnalysis() {
-            const btn = document.getElementById('analyzeBtn');
-            btn.disabled = true;
-            btn.innerText = 'Analyzing Audio Vectors...';
+  });
 
-            let audioMetrics = { jitter: '0.84%', flatness: '0.14', harmonic: '89.2 dB', cadence: 'High (Organic)', aiProb: 14 };
 
-            if (selectedFile) {
-                try {
-                    const arrayBuffer = await selectedFile.arrayBuffer();
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const decodedBuffer = await audioContext.decodeAudioData(arrayBuffer);
-                    
-                    // Simple programmatic analysis derived from actual sample properties
-                    const duration = decodedBuffer.duration;
-                    const sampleRate = decodedBuffer.sampleRate;
-                    const channelData = decodedBuffer.getChannelData(0);
-                    
-                    // Basic variance estimation for synthetic calculation mapping
-                    let sumSq = 0;
-                    for(let i = 0; i < channelData.length; i+=100) {
-                        sumSq += channelData[i] * channelData[i];
-                    }
-                    const rms = Math.sqrt(sumSq / (channelData.length / 100));
-                    
-                    audioMetrics.aiProb = Math.min(Math.max(Math.round(rms * 150), 5), 96);
-                } catch(err) {
-                    console.warn("Using heuristic estimation fallback", err);
-                }
-            } else {
-                // Dummy baseline if no file uploaded
-                audioMetrics.aiProb = Math.floor(Math.random() * 80) + 10;
-            }
+  /*
+    Negeri detection.
+  */
 
-            // Update UI based on generated score
-            setTimeout(() => {
-                document.getElementById('resultsCard').classList.remove('hidden');
-                
-                const isBot = audioMetrics.aiProb > 60;
-                const badge = document.getElementById('verdictBadge');
-                const title = document.getElementById('verdictTitle');
-                
-                if(isBot) {
-                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 mb-2";
-                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Synthetic / Voicebot Signature`;
-                    title.innerText = "High Probability of Artificial Generation";
-                } else {
-                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2";
-                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Likely Real Human Voice`;
-                    title.innerText = "Organic Speech Pattern Detected";
-                }
+  const states=[
+    "Johor",
+    "Kedah",
+    "Kelantan",
+    "Melaka",
+    "Negeri Sembilan",
+    "Pahang",
+    "Perak",
+    "Perlis",
+    "Penang",
+    "Sabah",
+    "Sarawak",
+    "Selangor",
+    "Terengganu",
+    "Kuala Lumpur",
+    "Putrajaya",
+    "Labuan"
+  ];
 
-                document.getElementById('aiScore').innerText = audioMetrics.aiProb + '%';
-                document.getElementById('mJitter').innerText = (audioMetrics.aiProb * 0.04).toFixed(2) + '%';
-                document.getElementById('mFlatness').innerText = (audioMetrics.aiProb * 0.003).toFixed(2);
-                
-                // Update chart data dynamically
-                const botOffset = isBot ? 85 : 25;
-                chartInstance.data.datasets[0].data = [
-                    Math.max(10, 100 - audioMetrics.aiProb),
-                    Math.max(20, 90 - audioMetrics.aiProb / 2),
-                    botOffset,
-                    Math.max(15, 95 - audioMetrics.aiProb),
-                    botOffset * 0.9,
-                    Math.max(30, 88 - audioMetrics.aiProb / 3)
-                ];
-                chartInstance.update();
+  const foundState=states.find(
+    state=>lower.includes(state.toLowerCase())
+  );
 
-                btn.disabled = false;
-                btn.innerText = 'Run Immediate Comparison';
-            }, 600);
-        }
-    </script>
+  if(foundState){
+    document.getElementById("negeri").value=foundState;
+  }
+
+}
+
+
+/* ============================================================
+   ATTACHMENTS
+   ============================================================ */
+
+function displayAttachments(){
+
+  const input=document.getElementById("attachments");
+
+  const container=document.getElementById("attachmentList");
+
+  container.innerHTML="";
+
+  [...input.files].forEach(file=>{
+
+    const div=document.createElement("div");
+
+    div.className="attachment-item";
+
+    div.textContent=
+      📎 ${file.name} — ${formatBytes(file.size)};
+
+    container.appendChild(div);
+
+  });
+
+}
+
+
+/* ============================================================
+   ISSUE FORM
+   ============================================================ */
+
+function getIssueData(){
+
+  return {
+
+    responseTitle:
+      document.getElementById("responseTitle").value,
+
+    negeri:
+      document.getElementById("negeri").value,
+
+    summary:
+      document.getElementById("summary").value,
+
+    name:
+      document.getElementById("name").value,
+
+    nric:
+      document.getElementById("nric").value,
+
+    company:
+      document.getElementById("company").value,
+
+    ssm:
+      document.getElementById("ssm").value,
+
+    phone:
+      document.getElementById("phone").value,
+
+    email:
+      document.getElementById("email").value,
+
+    category:
+      document.getElementById("category").value,
+
+    attachments:
+      [...document.getElementById("attachments").files]
+        .map(file=>({
+          name:file.name,
+          type:file.type,
+          size:file.size
+        }))
+
+  };
+
+}
+
+
+function prepareSubmission(){
+
+  const data=getIssueData();
+
+  if(!data.name){
+    toast("Please enter your name.");
+    return;
+  }
+
+  if(!data.email){
+    toast("Please enter your email.");
+    return;
+  }
+
+  if(!data.summary){
+    toast("Please provide a summary of the issue.");
+    return;
+  }
+
+  /*
+    Placeholder behavior until the real form URL is supplied.
+  */
+
+  if(!EXTERNAL_FORM_URL){
+
+    toast("Form URL not configured yet.");
+
+    console.log("Prepared submission:",data);
+
+    alert(
+      "The information has been prepared successfully.\n\n" +
+      "The external form URL is currently a placeholder.\n\n" +
+      "Once you provide the real URL, this button can be connected to the actual submission workflow."
+    );
+
+    return;
+  }
+
+  /*
+    IMPORTANT:
+    A normal HTML page cannot reliably auto-fill arbitrary
+    third-party forms because of browser security / cross-origin
+    restrictions.
+
+    When the actual form URL is provided, the correct integration
+    depends on whether the destination form supports:
+      - URL parameters
+      - POST requests
+      - API
+      - embedded form
+      - automation endpoint
+  */
+
+  window.open(EXTERNAL_FORM_URL,"_blank");
+
+}
+
+
+function clearIssueForm(){
+
+  [
+    "responseTitle",
+    "summary",
+    "name",
+    "nric",
+    "company",
+    "ssm",
+    "phone",
+    "email"
+  ].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+
+  document.getElementById("negeri").value="";
+  document.getElementById("category").value="";
+  document.getElementById("attachments").value="";
+  document.getElementById("attachmentList").innerHTML="";
+
+  toast("Form cleared.");
+
+}
+
+
+function downloadJSON(){
+
+  const data=getIssueData();
+
+  const blob=new Blob(
+    [JSON.stringify(data,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download="issue-submission.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+}
+
+
+/* ============================================================
+   EXPORT KNOWLEDGE BASE
+   ============================================================ */
+
+async function exportKB(){
+
+  const docs=await getAllDocuments();
+
+  const exportData=docs.map(d=>({
+    name:d.name,
+    type:d.type,
+    size:d.size,
+    text:d.text,
+    uploadedAt:d.uploadedAt
+  }));
+
+  const blob=new Blob(
+    [JSON.stringify(exportData,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download="knowledge-base-export.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  toast("Knowledge base exported.");
+}
+
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+
+(async function init(){
+
+  try{
+
+    await openDB();
+
+    await renderKB();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast("Could not initialize local knowledge storage.");
+
+  }
+
+})();
+
+</script>
+
 </body>
 </html>
